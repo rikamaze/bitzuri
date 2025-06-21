@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, memo, useEffect } from "react"
+import { useState, memo, useEffect, useCallback } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -13,7 +13,9 @@ import { PriceChange } from "@/components/shared/price-change"
 import { LoadingSpinner } from "@/components/ui/loading-spinner"
 import { usePortfolio } from "@/lib/hooks/usePortfolio"
 import { useMarketData } from "@/lib/hooks/useMarketData"
-import { TrendingUp, TrendingDown, Shield, Clock, AlertTriangle, Zap } from "lucide-react"
+import { createOrder, calculateTradingFee, validateTradeAmount } from "@/lib/api/tradeService"
+import { useToast } from "@/components/ui/use-toast"
+import { TrendingUp, TrendingDown, Shield, Clock, AlertTriangle, Zap, CheckCircle, Activity } from "lucide-react"
 
 interface QuickTradeProps {
   defaultAction?: "buy" | "sell"
@@ -29,44 +31,104 @@ export const QuickTrade = memo(function QuickTrade({ defaultAction = "buy", defa
   const [isProcessing, setIsProcessing] = useState(false)
   const [estimatedTotal, setEstimatedTotal] = useState(0)
   const [estimatedFee, setEstimatedFee] = useState(0)
+  const [lastOrderId, setLastOrderId] = useState<string | null>(null)
 
-  const { data: portfolioData } = usePortfolio()
-  const { marketData } = useMarketData()
+  const { data: portfolioData, refresh: refreshPortfolio } = usePortfolio()
+  const { marketData, lastUpdate } = useMarketData("", true) // Enable real-time updates
+  const { toast } = useToast()
 
   const selectedMarketData = marketData.find((crypto) => crypto.symbol === selectedAsset)
   const selectedHolding = portfolioData?.assets.find((asset) => asset.symbol === selectedAsset)
 
-  // Calculate estimated values
+  // Calculate estimated values with enhanced logic
   useEffect(() => {
     if (amount && selectedMarketData) {
       const numAmount = Number.parseFloat(amount)
       const price = orderType === "limit" && limitPrice ? Number.parseFloat(limitPrice) : selectedMarketData.price
-      const total = numAmount * price
-      const fee = total * 0.001 // 0.1% fee
+      
+      let total: number
+      if (action === "buy") {
+        // For buy orders, amount is in USD
+        total = numAmount
+      } else {
+        // For sell orders, amount is in crypto, calculate USD value
+        total = numAmount * price
+      }
+      
+      const fee = calculateTradingFee(total)
       setEstimatedTotal(total)
       setEstimatedFee(fee)
     } else {
       setEstimatedTotal(0)
       setEstimatedFee(0)
     }
-  }, [amount, selectedMarketData, orderType, limitPrice])
+  }, [amount, selectedMarketData, orderType, limitPrice, action])
 
-  const handleTrade = async () => {
+  const handleTrade = useCallback(async () => {
+    if (!canTrade() || !selectedMarketData) return
+    
     setIsProcessing(true)
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-    setIsProcessing(false)
-    // Reset form
-    setAmount("")
-    setLimitPrice("")
-  }
+    try {
+      const numAmount = Number.parseFloat(amount)
+      const price = orderType === "limit" && limitPrice ? Number.parseFloat(limitPrice) : selectedMarketData.price
+      
+      const response = await createOrder({
+        type: action,
+        symbol: selectedAsset,
+        orderType,
+        amount: numAmount,
+        price,
+        fee: estimatedFee
+      })
+      
+      setLastOrderId(response.orderId)
+      
+      toast({
+        title: "Trade Executed Successfully!",
+        description: `${action === "buy" ? "Bought" : "Sold"} ${numAmount} ${selectedAsset} at $${response.executedPrice.toFixed(2)}`,
+        duration: 5000,
+      })
+      
+      // Refresh portfolio data
+      await refreshPortfolio()
+      
+      // Reset form
+      setAmount("")
+      setLimitPrice("")
+      
+    } catch (error) {
+      toast({
+        title: "Trade Failed",
+        description: error instanceof Error ? error.message : "An unexpected error occurred",
+        variant: "destructive",
+        duration: 5000,
+      })
+    } finally {
+      setIsProcessing(false)
+    }
+  }, [action, selectedAsset, orderType, amount, limitPrice, estimatedFee, selectedMarketData, canTrade, toast, refreshPortfolio])
 
-  const canTrade = () => {
-    if (!amount || Number.parseFloat(amount) <= 0) return false
+  const canTrade = useCallback(() => {
+    const numAmount = Number.parseFloat(amount)
+    
+    // Basic validation
+    if (!amount || numAmount <= 0) return false
+    if (!validateTradeAmount(numAmount)) return false
     if (orderType === "limit" && (!limitPrice || Number.parseFloat(limitPrice) <= 0)) return false
-    if (action === "sell" && (!selectedHolding || selectedHolding.balance < Number.parseFloat(amount))) return false
+    if (!selectedMarketData) return false
+    
+    if (action === "sell") {
+      // For sell orders, check if user has enough crypto
+      if (!selectedHolding || selectedHolding.balance < numAmount) return false
+    } else {
+      // For buy orders, check if user has enough USD (including fees)
+      const availableUSD = portfolioData?.availableBalance || 0
+      const totalCost = estimatedTotal + estimatedFee
+      if (availableUSD < totalCost) return false
+    }
+    
     return true
-  }
+  }, [amount, orderType, limitPrice, selectedMarketData, action, selectedHolding, portfolioData, estimatedTotal, estimatedFee])
 
   const getAvailableBalance = () => {
     if (action === "buy") {
@@ -173,11 +235,17 @@ export const QuickTrade = memo(function QuickTrade({ defaultAction = "buy", defa
           </Select>
         </div>
 
-        {/* Current Price Display */}
+        {/* Current Price Display with Real-time Updates */}
         {selectedMarketData && (
           <div className="p-3 bg-white/5 rounded-lg border border-white/10">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-slate-300">Current Price</span>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-slate-300">Current Price</span>
+                <Badge className="bg-green-500/20 text-green-300 border-green-500/30 animate-pulse">
+                  <Activity className="h-2 w-2 mr-1" />
+                  Live
+                </Badge>
+              </div>
               <div className="text-right">
                 <p className="font-bold text-white">${selectedMarketData.price.toLocaleString()}</p>
                 <PriceChange
@@ -186,6 +254,9 @@ export const QuickTrade = memo(function QuickTrade({ defaultAction = "buy", defa
                   size="sm"
                 />
               </div>
+            </div>
+            <div className="mt-2 text-xs text-slate-400">
+              Last updated: {lastUpdate.toLocaleTimeString()}
             </div>
           </div>
         )}
@@ -243,7 +314,7 @@ export const QuickTrade = memo(function QuickTrade({ defaultAction = "buy", defa
 
         <Separator className="bg-white/10" />
 
-        {/* Order Summary */}
+        {/* Enhanced Order Summary */}
         <div className="space-y-3 p-4 bg-white/5 rounded-lg border border-white/10">
           <h4 className="font-semibold text-white text-sm">Order Summary</h4>
           <div className="space-y-2 text-sm">
@@ -259,6 +330,12 @@ export const QuickTrade = memo(function QuickTrade({ defaultAction = "buy", defa
               <span className="text-slate-300">Trading Fee (0.1%)</span>
               <span className="text-white font-medium">${estimatedFee.toFixed(2)}</span>
             </div>
+            {action === "buy" && (
+              <div className="flex justify-between">
+                <span className="text-slate-300">Total Cost</span>
+                <span className="text-white font-bold">${(estimatedTotal + estimatedFee).toFixed(2)}</span>
+              </div>
+            )}
             <div className="flex justify-between">
               <span className="text-slate-300">Order Type</span>
               <span className="text-white font-medium capitalize">{orderType}</span>
@@ -267,6 +344,12 @@ export const QuickTrade = memo(function QuickTrade({ defaultAction = "buy", defa
               <div className="flex items-center gap-2 text-xs text-yellow-400">
                 <Clock className="h-3 w-3" />
                 Executes immediately at market price
+              </div>
+            )}
+            {orderType === "limit" && (
+              <div className="flex items-center gap-2 text-xs text-blue-400">
+                <Shield className="h-3 w-3" />
+                Executes only at your specified price or better
               </div>
             )}
           </div>
@@ -301,14 +384,41 @@ export const QuickTrade = memo(function QuickTrade({ defaultAction = "buy", defa
           )}
         </Button>
 
-        {/* Validation Messages */}
+        {/* Enhanced Validation Messages */}
         {amount && !canTrade() && !isProcessing && (
           <div className="flex items-center gap-2 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
             <AlertTriangle className="h-4 w-4 text-red-400" />
             <span className="text-xs text-red-300">
-              {action === "sell" && (!selectedHolding || selectedHolding.balance < Number.parseFloat(amount))
-                ? `Insufficient ${selectedAsset} balance`
-                : "Please check your input values"}
+              {(() => {
+                const numAmount = Number.parseFloat(amount)
+                if (action === "sell" && (!selectedHolding || selectedHolding.balance < numAmount)) {
+                  return `Insufficient ${selectedAsset} balance. Available: ${selectedHolding?.balance.toFixed(6) || 0} ${selectedAsset}`
+                }
+                if (action === "buy") {
+                  const availableUSD = portfolioData?.availableBalance || 0
+                  const totalCost = estimatedTotal + estimatedFee
+                  if (availableUSD < totalCost) {
+                    return `Insufficient USD balance. Need: $${totalCost.toFixed(2)}, Available: $${availableUSD.toFixed(2)}`
+                  }
+                }
+                if (!validateTradeAmount(numAmount)) {
+                  return "Trade amount is outside allowed limits"
+                }
+                if (orderType === "limit" && (!limitPrice || Number.parseFloat(limitPrice) <= 0)) {
+                  return "Please enter a valid limit price"
+                }
+                return "Please check your input values"
+              })()}
+            </span>
+          </div>
+        )}
+
+        {/* Success Message */}
+        {lastOrderId && (
+          <div className="flex items-center gap-2 p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
+            <CheckCircle className="h-4 w-4 text-green-400" />
+            <span className="text-xs text-green-300">
+              Order {lastOrderId} executed successfully!
             </span>
           </div>
         )}

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, memo } from "react"
+import { useState, memo, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -8,7 +8,8 @@ import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { Switch } from "@/components/ui/switch"
 import { Separator } from "@/components/ui/separator"
-import { Shield, Smartphone, Key, Eye, EyeOff, AlertTriangle, Lock, Fingerprint, Mail } from "lucide-react"
+import { Shield, Smartphone, Key, Eye, EyeOff, AlertTriangle, Lock, Fingerprint, Mail, Activity, CheckCircle, Clock } from "lucide-react"
+import { useTransactions } from "@/lib/hooks/useTransactions"
 
 export const TransactionSecurity = memo(function TransactionSecurity() {
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(true)
@@ -16,6 +17,12 @@ export const TransactionSecurity = memo(function TransactionSecurity() {
   const [transactionLimits, setTransactionLimits] = useState(true)
   const [emailNotifications, setEmailNotifications] = useState(true)
   const [showApiKey, setShowApiKey] = useState(false)
+  const [realtimeMonitoring, setRealtimeMonitoring] = useState(true)
+
+  const { transactions } = useTransactions()
+  
+  // Get recent transactions for monitoring
+  const recentTransactions = transactions.slice(0, 5)
 
   const securityFeatures = [
     {
@@ -48,6 +55,14 @@ export const TransactionSecurity = memo(function TransactionSecurity() {
       icon: Mail,
       enabled: emailNotifications,
       onToggle: setEmailNotifications,
+      status: "active",
+    },
+    {
+      title: "Real-time Monitoring",
+      description: "Monitor all transactions in real-time",
+      icon: Activity,
+      enabled: realtimeMonitoring,
+      onToggle: setRealtimeMonitoring,
       status: "active",
     },
   ]
@@ -211,6 +226,67 @@ export const TransactionSecurity = memo(function TransactionSecurity() {
           </Button>
         </CardContent>
       </Card>
+
+      {/* Real-time Transaction Monitoring */}
+      {realtimeMonitoring && (
+        <Card className="backdrop-blur-md bg-white/10 border-white/20 shadow-2xl">
+          <CardHeader>
+            <CardTitle className="text-lg font-semibold text-white flex items-center gap-2">
+              <Activity className="h-5 w-5 text-green-400" />
+              Real-time Transaction Monitor
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                <span className="text-green-300 text-sm font-medium">Monitoring Active</span>
+              </div>
+              <Badge className="bg-green-500/20 text-green-300 border-green-500/30">Live</Badge>
+            </div>
+
+            <div className="space-y-3">
+              <h4 className="font-semibold text-white text-sm">Recent Activity</h4>
+              {recentTransactions.length > 0 ? (
+                recentTransactions.map((tx) => (
+                  <div key={tx.id} className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/10">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                        tx.status === "completed" ? "bg-green-500/20" : 
+                        tx.status === "pending" ? "bg-yellow-500/20" : "bg-blue-500/20"
+                      }`}>
+                        {tx.status === "completed" ? (
+                          <CheckCircle className="h-4 w-4 text-green-400" />
+                        ) : tx.status === "pending" ? (
+                          <Clock className="h-4 w-4 text-yellow-400" />
+                        ) : (
+                          <Activity className="h-4 w-4 text-blue-400" />
+                        )}
+                      </div>
+                      <div>
+                        <p className="text-white text-sm font-medium capitalize">{tx.type} {tx.asset}</p>
+                        <p className="text-slate-400 text-xs">{new Date(tx.timestamp).toLocaleString()}</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-white text-sm font-medium">{tx.amount} {tx.asset}</p>
+                      <Badge className={
+                        tx.status === "completed" ? "bg-green-500/20 text-green-300 border-green-500/30" :
+                        tx.status === "pending" ? "bg-yellow-500/20 text-yellow-300 border-yellow-500/30" :
+                        "bg-blue-500/20 text-blue-300 border-blue-500/30"
+                      }>
+                        {tx.status}
+                      </Badge>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-slate-400 text-sm text-center py-4">No recent transactions</p>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 })

@@ -70,17 +70,29 @@ const fetchMarketData = async (): Promise<MarketAsset[]> => {
   ]
 }
 
-export const useMarketData = (searchQuery?: string) => {
+export const useMarketData = (searchQuery?: string, enableRealTime: boolean = false) => {
   const [marketData, setMarketData] = useState<MarketAsset[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [lastUpdate, setLastUpdate] = useState<Date>(new Date())
 
-  const fetchData = useCallback(async () => {
+  const fetchData = useCallback(async (isRefresh: boolean = false) => {
     try {
-      setLoading(true)
+      if (!isRefresh) setLoading(true)
       setError(null)
       const data = await fetchMarketData()
-      setMarketData(data)
+      
+      // Add small price variations for real-time effect
+      const updatedData = data.map(asset => ({
+        ...asset,
+        price: asset.price * (0.998 + Math.random() * 0.004), // ±0.2% variation
+        change: asset.change + (Math.random() - 0.5) * 10,
+        changePercent: asset.changePercent + (Math.random() - 0.5) * 2,
+        sparkline: [...asset.sparkline.slice(1), asset.price * (0.999 + Math.random() * 0.002)]
+      }))
+      
+      setMarketData(updatedData)
+      setLastUpdate(new Date())
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to fetch market data")
     } finally {
@@ -91,6 +103,17 @@ export const useMarketData = (searchQuery?: string) => {
   useEffect(() => {
     fetchData()
   }, [fetchData])
+
+  // Real-time updates every 5 seconds
+  useEffect(() => {
+    if (!enableRealTime) return
+
+    const interval = setInterval(() => {
+      fetchData(true) // Refresh without loading state
+    }, 5000)
+
+    return () => clearInterval(interval)
+  }, [fetchData, enableRealTime])
 
   const filteredData = useMemo(() => {
     if (!searchQuery) return marketData
@@ -106,6 +129,7 @@ export const useMarketData = (searchQuery?: string) => {
     marketData: filteredData,
     loading,
     error,
+    lastUpdate,
     refresh: fetchData,
   }
 }

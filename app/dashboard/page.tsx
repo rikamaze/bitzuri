@@ -167,7 +167,7 @@ export default function DashboardPage() {
     error: portfolioError,
     refresh: refreshPortfolio,
   } = usePortfolio()
-  const { marketData, loading: marketLoading, error: marketError, refresh: refreshMarket } = useMarketData(searchQuery)
+  const { marketData, loading: marketLoading, error: marketError, refresh: refreshMarket } = useMarketData(searchQuery, true)
   const { transactions, loading: transactionsLoading, error: transactionsError } = useTransactions()
 
   const onboarding = useOnboarding()

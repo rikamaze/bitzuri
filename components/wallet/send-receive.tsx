@@ -1,7 +1,9 @@
 "use client"
 
-import { useState, memo } from "react"
+import { useState, memo, useCallback, useEffect } from "react"
 import { motion } from "framer-motion"
+import dynamic from "next/dynamic"
+import QRCode from "react-qr-code"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -9,10 +11,20 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Separator } from "@/components/ui/separator"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { AssetIcon } from "@/components/shared/asset-icon"
 import { LoadingSpinner } from "@/components/ui/loading-spinner"
 import { usePortfolio } from "@/lib/hooks/usePortfolio"
-import { Send, Download, Copy, QrCode, Shield, AlertTriangle, CheckCircle, Scan, Wallet, Clock } from "lucide-react"
+import { useToast } from "@/components/ui/use-toast"
+import { sendTransaction, validateAddress, getNetworkFee, generateDepositAddress } from "@/lib/api/walletService"
+import { generateQRData, parseQRData } from "@/lib/api/qrService"
+import { Send, Download, Copy, QrCode, Shield, AlertTriangle, CheckCircle, Scan, Wallet, Clock, Camera, X } from "lucide-react"
+
+// Dynamically import QR Reader to avoid SSR issues
+const QrReader = dynamic(() => import('react-qr-reader'), { 
+  ssr: false,
+  loading: () => <div className="flex items-center justify-center h-64"><LoadingSpinner /></div>
+})
 
 export const SendReceive = memo(function SendReceive() {
   const [activeTab, setActiveTab] = useState("send")
@@ -21,45 +33,115 @@ export const SendReceive = memo(function SendReceive() {
   const [sendAmount, setSendAmount] = useState("")
   const [isProcessing, setIsProcessing] = useState(false)
   const [transactionHash, setTransactionHash] = useState("")
+  const [showQRScanner, setShowQRScanner] = useState(false)
+  const [addressError, setAddressError] = useState("")
+  const [networkFee, setNetworkFee] = useState(0)
+  const [feeInUSD, setFeeInUSD] = useState(0)
 
-  const { data: portfolioData } = usePortfolio()
+  const { data: portfolioData, refresh: refreshPortfolio } = usePortfolio()
+  const { toast } = useToast()
   const selectedHolding = portfolioData?.assets.find((asset) => asset.symbol === selectedAsset)
 
-  const handleSend = async () => {
-    setIsProcessing(true)
-    // Simulate transaction
-    await new Promise((resolve) => setTimeout(resolve, 3000))
-    setTransactionHash("0x1234567890abcdef1234567890abcdef12345678")
-    setIsProcessing(false)
-    // Reset form
-    setRecipientAddress("")
-    setSendAmount("")
-  }
+  // Update network fees when asset changes
+  useEffect(() => {
+    const fee = getNetworkFee(selectedAsset)
+    setNetworkFee(fee)
+    
+    // Calculate USD value of fee
+    const assetPrice = selectedHolding?.price || 0
+    setFeeInUSD(fee * assetPrice)
+  }, [selectedAsset, selectedHolding])
 
-  const canSend = () => {
+  // Validate address when it changes
+  useEffect(() => {
+    if (recipientAddress) {
+      const isValid = validateAddress(recipientAddress, selectedAsset)
+      setAddressError(isValid ? "" : `Invalid ${selectedAsset} address format`)
+    } else {
+      setAddressError("")
+    }
+  }, [recipientAddress, selectedAsset])
+
+  const handleSend = useCallback(async () => {
+    if (!canSend()) return
+    
+    setIsProcessing(true)
+    try {
+      const response = await sendTransaction({
+        asset: selectedAsset,
+        to: recipientAddress,
+        amount: Number.parseFloat(sendAmount),
+        fee: networkFee
+      })
+      
+      setTransactionHash(response.hash)
+      
+      toast({
+        title: "Transaction Sent Successfully!",
+        description: `${sendAmount} ${selectedAsset} sent to ${recipientAddress.slice(0, 10)}...`,
+        duration: 5000,
+      })
+      
+      // Refresh portfolio
+      await refreshPortfolio()
+      
+      // Reset form
+      setRecipientAddress("")
+      setSendAmount("")
+      
+    } catch (error) {
+      toast({
+        title: "Transaction Failed",
+        description: error instanceof Error ? error.message : "An unexpected error occurred",
+        variant: "destructive",
+        duration: 5000,
+      })
+    } finally {
+      setIsProcessing(false)
+    }
+  }, [selectedAsset, recipientAddress, sendAmount, networkFee, canSend, toast, refreshPortfolio])
+
+  const canSend = useCallback(() => {
+    const amount = Number.parseFloat(sendAmount)
     return (
       recipientAddress.length > 0 &&
+      !addressError &&
       sendAmount &&
-      Number.parseFloat(sendAmount) > 0 &&
+      amount > 0 &&
       selectedHolding &&
-      selectedHolding.balance >= Number.parseFloat(sendAmount)
+      selectedHolding.balance >= (amount + networkFee) // Include network fee
     )
-  }
+  }, [recipientAddress, addressError, sendAmount, selectedHolding, networkFee])
 
-  const getNetworkFee = () => {
-    const fees: Record<string, number> = {
-      BTC: 0.0001,
-      ETH: 0.002,
-      BNB: 0.0005,
-      ADA: 0.17,
-      SOL: 0.00025,
+  const handleQRScan = useCallback((data: string | null) => {
+    if (data) {
+      const parsed = parseQRData(data)
+      if (parsed) {
+        setRecipientAddress(parsed.address)
+        if (parsed.amount) {
+          setSendAmount(parsed.amount.toString())
+        }
+        setShowQRScanner(false)
+        toast({
+          title: "QR Code Scanned",
+          description: "Address has been filled automatically",
+        })
+      } else {
+        // Try to use raw data as address
+        setRecipientAddress(data)
+        setShowQRScanner(false)
+      }
     }
-    return fees[selectedAsset] || 0.001
-  }
+  }, [toast])
 
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text)
-  }
+  const handleMaxAmount = useCallback(() => {
+    if (selectedHolding) {
+      const maxSendable = Math.max(0, selectedHolding.balance - networkFee)
+      setSendAmount(maxSendable.toString())
+    }
+  }, [selectedHolding, networkFee])
+
+
 
   return (
     <Card className="backdrop-blur-md bg-white/10 border-white/20 shadow-2xl">
@@ -118,24 +200,39 @@ export const SendReceive = memo(function SendReceive() {
                   </Select>
                 </div>
 
-                {/* Recipient Address */}
+                {/* Recipient Address with Enhanced Validation */}
                 <div className="space-y-2">
                   <Label className="text-slate-300 text-sm font-medium">Recipient Address</Label>
                   <div className="relative">
                     <Input
-                      placeholder="Enter wallet address or scan QR code"
+                      placeholder={`Enter ${selectedAsset} wallet address`}
                       value={recipientAddress}
-                      onChange={(e) => setRecipientAddress(e.target.value)}
-                      className="h-12 bg-white/5 border-white/20 text-white placeholder:text-slate-400 pr-12"
+                      onChange={(e) => setRecipientAddress(e.target.value.trim())}
+                      className={`h-12 bg-white/5 border-white/20 text-white placeholder:text-slate-400 pr-12 ${
+                        addressError ? "border-red-500/50" : recipientAddress && !addressError ? "border-green-500/50" : ""
+                      }`}
                     />
                     <Button
                       variant="ghost"
                       size="sm"
+                      onClick={() => setShowQRScanner(true)}
                       className="absolute right-2 top-1/2 transform -translate-y-1/2 text-purple-400 hover:text-purple-300 h-8"
                     >
                       <Scan className="h-4 w-4" />
                     </Button>
                   </div>
+                  {addressError && (
+                    <p className="text-xs text-red-400 flex items-center gap-1">
+                      <AlertTriangle className="h-3 w-3" />
+                      {addressError}
+                    </p>
+                  )}
+                  {recipientAddress && !addressError && (
+                    <p className="text-xs text-green-400 flex items-center gap-1">
+                      <CheckCircle className="h-3 w-3" />
+                      Valid {selectedAsset} address
+                    </p>
+                  )}
                 </div>
 
                 {/* Amount */}
@@ -157,7 +254,7 @@ export const SendReceive = memo(function SendReceive() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => setSendAmount(selectedHolding?.balance.toString() || "0")}
+                      onClick={handleMaxAmount}
                       className="absolute right-2 top-1/2 transform -translate-y-1/2 text-purple-400 hover:text-purple-300 h-8"
                     >
                       Max
@@ -179,16 +276,26 @@ export const SendReceive = memo(function SendReceive() {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-slate-300">Network fee</span>
-                      <span className="text-white font-medium">
-                        {getNetworkFee()} {selectedAsset}
-                      </span>
+                      <div className="text-right">
+                        <span className="text-white font-medium">
+                          {networkFee} {selectedAsset}
+                        </span>
+                        <p className="text-xs text-slate-400">
+                          ≈ ${feeInUSD.toFixed(2)}
+                        </p>
+                      </div>
                     </div>
                     <div className="flex justify-between border-t border-white/10 pt-2">
                       <span className="text-slate-300 font-medium">Total</span>
-                      <span className="text-white font-bold">
-                        {sendAmount ? (Number.parseFloat(sendAmount) + getNetworkFee()).toFixed(6) : "0.000000"}{" "}
-                        {selectedAsset}
-                      </span>
+                      <div className="text-right">
+                        <span className="text-white font-bold">
+                          {sendAmount ? (Number.parseFloat(sendAmount) + networkFee).toFixed(6) : "0.000000"}{" "}
+                          {selectedAsset}
+                        </span>
+                        <p className="text-xs text-slate-400">
+                          ≈ ${sendAmount ? ((Number.parseFloat(sendAmount) + networkFee) * (selectedHolding?.price || 0)).toFixed(2) : "0.00"}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -285,22 +392,36 @@ export const SendReceive = memo(function SendReceive() {
               </Select>
             </div>
 
-            {/* Wallet Address */}
+            {/* Enhanced Wallet Address with Real QR Code */}
             <div className="space-y-4">
               <div className="p-6 bg-white/5 rounded-lg border border-white/10 text-center">
-                <div className="w-32 h-32 bg-white rounded-lg mx-auto mb-4 flex items-center justify-center">
-                  <QrCode className="h-16 w-16 text-slate-800" />
+                <div className="w-48 h-48 bg-white rounded-lg mx-auto mb-4 p-4">
+                  <QRCode
+                    value={generateQRData({
+                      address: generateDepositAddress(selectedAsset),
+                      asset: selectedAsset,
+                      label: `${selectedAsset} Deposit Address`
+                    })}
+                    size={176}
+                    style={{ height: "auto", maxWidth: "100%", width: "100%" }}
+                  />
                 </div>
-                <p className="text-sm text-slate-300 mb-2">Your {selectedAsset} Address</p>
+                <p className="text-sm text-slate-300 mb-2">Your {selectedAsset} Deposit Address</p>
                 <div className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/10">
-                  <span className="text-white font-mono text-sm break-all">
-                    bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh
+                  <span className="text-white font-mono text-sm break-all flex-1 mr-2">
+                    {generateDepositAddress(selectedAsset)}
                   </span>
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => copyToClipboard("bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh")}
-                    className="text-purple-400 hover:text-purple-300 ml-2"
+                    onClick={() => {
+                      navigator.clipboard.writeText(generateDepositAddress(selectedAsset))
+                      toast({
+                        title: "Address Copied",
+                        description: "Deposit address copied to clipboard",
+                      })
+                    }}
+                    className="text-purple-400 hover:text-purple-300"
                   >
                     <Copy className="h-4 w-4" />
                   </Button>
@@ -326,6 +447,51 @@ export const SendReceive = memo(function SendReceive() {
           </TabsContent>
         </Tabs>
       </CardContent>
+
+      {/* QR Scanner Dialog */}
+      <Dialog open={showQRScanner} onOpenChange={setShowQRScanner}>
+        <DialogContent className="backdrop-blur-md bg-slate-900/95 border-white/20 text-white max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-white flex items-center gap-2">
+              <Camera className="h-5 w-5" />
+              Scan QR Code
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="relative">
+              <QrReader
+                delay={300}
+                onError={(error) => {
+                  console.error('QR Scanner Error:', error)
+                  toast({
+                    title: "Scanner Error",
+                    description: "Unable to access camera. Please check permissions.",
+                    variant: "destructive",
+                  })
+                }}
+                onScan={handleQRScan}
+                style={{ width: '100%' }}
+                constraints={{
+                  video: { facingMode: 'environment' }
+                }}
+              />
+            </div>
+            <div className="flex justify-between">
+              <Button
+                variant="outline"
+                onClick={() => setShowQRScanner(false)}
+                className="bg-white/5 border-white/20 text-white hover:bg-white/10"
+              >
+                <X className="h-4 w-4 mr-2" />
+                Cancel
+              </Button>
+              <p className="text-xs text-slate-400 self-center">
+                Point camera at QR code
+              </p>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </Card>
   )
 })

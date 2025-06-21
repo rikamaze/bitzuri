@@ -12,6 +12,7 @@ export interface Asset {
   price: number
   allocation: number
   color: string
+  depositAddress?: string
 }
 
 export interface PortfolioData {
@@ -40,6 +41,7 @@ const fetchPortfolioData = async (): Promise<PortfolioData> => {
       price: 43250.5,
       allocation: 45.2,
       color: "#f7931a",
+      depositAddress: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
     },
     {
       symbol: "ETH",
@@ -51,6 +53,7 @@ const fetchPortfolioData = async (): Promise<PortfolioData> => {
       price: 2650.75,
       allocation: 35.8,
       color: "#627eea",
+      depositAddress: "0x742d35Cc6634C0532925a3b8D4C2C4e4C8C8C8C8",
     },
     {
       symbol: "BNB",
