@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
-import { TrendingUp, TrendingDown, Target, Shield, ChevronDown, ChevronRight, Sparkles, Info } from "lucide-react"
+import { TrendingUp, TrendingDown, Target, ChevronDown, ChevronRight, Sparkles, Info } from "lucide-react"
 import type { Recommendation } from "@/lib/types/enhancements"
 
 const mockRecommendations: Recommendation[] = [
@@ -59,9 +59,9 @@ export function RecommendationEngine() {
       case "Hold":
         return <Target className={`${iconClass} text-blue-400`} />
       case "DiversifyPortfolio":
-        return <Shield className={`${iconClass} text-purple-400`} />
+        return <Target className={`${iconClass} text-purple-400`} />
       case "ReduceRisk":
-        return <Shield className={`${iconClass} text-orange-400`} />
+        return <Target className={`${iconClass} text-orange-400`} />
       default:
         return <Sparkles className={`${iconClass} text-yellow-400`} />
     }

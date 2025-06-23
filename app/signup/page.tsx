@@ -7,7 +7,7 @@ import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Eye, EyeOff, ArrowRight, Shield, Zap, Users } from "lucide-react"
+import { Eye, EyeOff, ArrowRight, Zap, Users } from "lucide-react"
 import Link from "next/link"
 
 export default function SignUpPage() {
@@ -80,12 +80,6 @@ export default function SignUpPage() {
                   <Users className="w-4 h-4" />
                 </div>
                 <span className="text-white/90">Join 500,000+ active traders worldwide</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
-                  <Shield className="w-4 h-4" />
-                </div>
-                <span className="text-white/90">$250K insurance protection per account</span>
               </div>
               <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">

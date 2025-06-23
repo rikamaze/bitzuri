@@ -39,7 +39,6 @@ import {
   Search,
   CreditCard,
   Banknote,
-  Shield,
   Clock,
   CheckCircle,
   AlertCircle,
@@ -728,10 +727,6 @@ const DepositDialog = memo(function DepositDialog() {
                 </div>
               </div>
               <p className="text-white font-mono text-sm break-all">bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh</p>
-            </div>
-            <div className="flex items-center gap-2 text-sm text-yellow-400">
-              <Shield className="h-4 w-4" />
-              <span>Only send {selectedAsset} to this address</span>
             </div>
           </div>
         )}

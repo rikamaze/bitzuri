@@ -200,7 +200,7 @@ export function Navigation() {
 
       {/* Spacer for fixed navigation */}
       <div className="h-16"></div>
-      <div className="h-16 lg:hidden"></div>
+      <div className="h-16 lg:hidden" style={{ display: "none" }}></div>
     </>
   )
 }

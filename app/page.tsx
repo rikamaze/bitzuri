@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Eye, EyeOff, ArrowRight, Shield, Zap } from "lucide-react"
+import { Eye, EyeOff, ArrowRight, Zap } from "lucide-react"
 import Link from "next/link"
 
 export default function LoginPage() {
@@ -76,12 +76,6 @@ export default function LoginPage() {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="space-y-4"
             >
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
-                  <Shield className="w-4 h-4" />
-                </div>
-                <span className="text-white/90">Your funds are protected by bank-grade security</span>
-              </div>
               <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
                   <Zap className="w-4 h-4" />
@@ -244,7 +238,6 @@ export default function LoginPage() {
               variant="outline"
               className="w-full h-12 border-gray-300 hover:bg-gray-50 font-medium rounded-lg"
             >
-              <Shield className="w-4 h-4 mr-2" />
               Sign in with passkey
             </Button>
 

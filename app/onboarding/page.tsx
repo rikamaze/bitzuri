@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Progress } from "@/components/ui/progress"
-import { ArrowRight, ArrowLeft, User, Shield, TrendingUp, CheckCircle } from "lucide-react"
+import { ArrowRight, ArrowLeft, User, TrendingUp, CheckCircle } from "lucide-react"
 import { CompletionStep } from "./CompletionStep" // Import CompletionStep
 
 export default function OnboardingPage() {
@@ -46,7 +46,7 @@ export default function OnboardingPage() {
     {
       title: "Identity Verification",
       description: "Verify your identity for security",
-      icon: Shield,
+      icon: User,
       component: VerificationStep,
     },
     {

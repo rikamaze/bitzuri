@@ -15,7 +15,7 @@ import { usePortfolio } from "@/lib/hooks/usePortfolio"
 import { useMarketData } from "@/lib/hooks/useMarketData"
 import { createOrder, calculateTradingFee, validateTradeAmount } from "@/lib/api/tradeService"
 import { useToast } from "@/components/ui/use-toast"
-import { TrendingUp, TrendingDown, Shield, Clock, AlertTriangle, Zap, CheckCircle, Activity } from "lucide-react"
+import { TrendingUp, TrendingDown, Clock, AlertTriangle, Zap, CheckCircle, Activity } from "lucide-react"
 
 interface QuickTradeProps {
   defaultAction?: "buy" | "sell"
@@ -39,6 +39,25 @@ export const QuickTrade = memo(function QuickTrade({ defaultAction = "buy", defa
 
   const selectedMarketData = marketData.find((crypto) => crypto.symbol === selectedAsset)
   const selectedHolding = portfolioData?.assets.find((asset) => asset.symbol === selectedAsset)
+
+  const canTrade = useCallback(() => {
+    const numAmount = Number.parseFloat(amount)
+    // Basic validation
+    if (!amount || numAmount <= 0) return false
+    if (!validateTradeAmount(numAmount)) return false
+    if (orderType === "limit" && (!limitPrice || Number.parseFloat(limitPrice) <= 0)) return false
+    if (!selectedMarketData) return false
+    if (action === "sell") {
+      // For sell orders, check if user has enough crypto
+      if (!selectedHolding || selectedHolding.balance < numAmount) return false
+    } else {
+      // For buy orders, check if user has enough USD (including fees)
+      const availableUSD = portfolioData?.availableBalance || 0
+      const totalCost = estimatedTotal + estimatedFee
+      if (availableUSD < totalCost) return false
+    }
+    return true
+  }, [amount, orderType, limitPrice, selectedMarketData, action, selectedHolding, portfolioData, estimatedTotal, estimatedFee])
 
   // Calculate estimated values with enhanced logic
   useEffect(() => {
@@ -108,28 +127,6 @@ export const QuickTrade = memo(function QuickTrade({ defaultAction = "buy", defa
     }
   }, [action, selectedAsset, orderType, amount, limitPrice, estimatedFee, selectedMarketData, canTrade, toast, refreshPortfolio])
 
-  const canTrade = useCallback(() => {
-    const numAmount = Number.parseFloat(amount)
-    
-    // Basic validation
-    if (!amount || numAmount <= 0) return false
-    if (!validateTradeAmount(numAmount)) return false
-    if (orderType === "limit" && (!limitPrice || Number.parseFloat(limitPrice) <= 0)) return false
-    if (!selectedMarketData) return false
-    
-    if (action === "sell") {
-      // For sell orders, check if user has enough crypto
-      if (!selectedHolding || selectedHolding.balance < numAmount) return false
-    } else {
-      // For buy orders, check if user has enough USD (including fees)
-      const availableUSD = portfolioData?.availableBalance || 0
-      const totalCost = estimatedTotal + estimatedFee
-      if (availableUSD < totalCost) return false
-    }
-    
-    return true
-  }, [amount, orderType, limitPrice, selectedMarketData, action, selectedHolding, portfolioData, estimatedTotal, estimatedFee])
-
   const getAvailableBalance = () => {
     if (action === "buy") {
       return portfolioData?.availableBalance || 0
@@ -147,7 +144,6 @@ export const QuickTrade = memo(function QuickTrade({ defaultAction = "buy", defa
             Quick Trade
           </CardTitle>
           <Badge className="bg-green-500/20 text-green-300 border-green-500/30">
-            <Shield className="h-3 w-3 mr-1" />
             Secure
           </Badge>
         </div>
@@ -348,17 +344,10 @@ export const QuickTrade = memo(function QuickTrade({ defaultAction = "buy", defa
             )}
             {orderType === "limit" && (
               <div className="flex items-center gap-2 text-xs text-blue-400">
-                <Shield className="h-3 w-3" />
                 Executes only at your specified price or better
               </div>
             )}
           </div>
-        </div>
-
-        {/* Security Notice */}
-        <div className="flex items-center gap-2 p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
-          <Shield className="h-4 w-4 text-blue-400" />
-          <span className="text-xs text-blue-300">All transactions are secured with bank-level encryption</span>
         </div>
 
         {/* Trade Button */}

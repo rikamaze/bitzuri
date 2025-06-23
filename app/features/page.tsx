@@ -10,7 +10,6 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
   Bell,
-  Shield,
   Zap,
   TrendingUp,
   Calendar,
@@ -37,12 +36,6 @@ export default function FeaturesPage() {
       title: "Instant Trading",
       description: "Execute trades in milliseconds with our advanced matching engine",
       color: "from-yellow-500 to-orange-500",
-    },
-    {
-      icon: Shield,
-      title: "Bank-Grade Security",
-      description: "Multi-layer security with cold storage and insurance protection",
-      color: "from-green-500 to-emerald-500",
     },
     {
       icon: Bell,
@@ -84,12 +77,9 @@ export default function FeaturesPage() {
 
       <div className="max-w-7xl mx-auto">
         <Tabs defaultValue="trading" className="space-y-8">
-          <TabsList className="grid w-full grid-cols-4 bg-white/5 border border-white/10 max-w-2xl mx-auto">
+          <TabsList className="grid w-full grid-cols-3 bg-white/5 border border-white/10 max-w-2xl mx-auto">
             <TabsTrigger value="trading" className="data-[state=active]:bg-white/20">
               Trading
-            </TabsTrigger>
-            <TabsTrigger value="security" className="data-[state=active]:bg-white/20">
-              Security
             </TabsTrigger>
             <TabsTrigger value="automation" className="data-[state=active]:bg-white/20">
               Automation
@@ -259,85 +249,6 @@ export default function FeaturesPage() {
                 </div>
               </CardContent>
             </Card>
-          </TabsContent>
-
-          <TabsContent value="security" className="space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-                <Card className="backdrop-blur-md bg-white/10 border-white/20 shadow-2xl h-full">
-                  <CardHeader>
-                    <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg flex items-center justify-center mb-4">
-                      <Shield className="h-6 w-6 text-white" />
-                    </div>
-                    <CardTitle className="text-white">Multi-Layer Security</CardTitle>
-                    <CardDescription className="text-slate-300">
-                      Your assets are protected by industry-leading security measures
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between p-2 bg-white/5 rounded">
-                        <div className="flex items-center space-x-2">
-                          <Lock className="h-4 w-4 text-green-400" />
-                          <span className="text-slate-300 text-sm">2FA Authentication</span>
-                        </div>
-                        <Badge className="bg-green-600">Enabled</Badge>
-                      </div>
-                      <div className="flex items-center justify-between p-2 bg-white/5 rounded">
-                        <div className="flex items-center space-x-2">
-                          <Smartphone className="h-4 w-4 text-green-400" />
-                          <span className="text-slate-300 text-sm">Biometric Login</span>
-                        </div>
-                        <Badge className="bg-green-600">Enabled</Badge>
-                      </div>
-                      <div className="flex items-center justify-between p-2 bg-white/5 rounded">
-                        <div className="flex items-center space-x-2">
-                          <Wallet className="h-4 w-4 text-green-400" />
-                          <span className="text-slate-300 text-sm">Cold Storage</span>
-                        </div>
-                        <Badge className="bg-green-600">95% Assets</Badge>
-                      </div>
-                    </div>
-                    <Button className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700">
-                      Security Settings
-                    </Button>
-                  </CardContent>
-                </Card>
-              </motion.div>
-
-              <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
-                <Card className="backdrop-blur-md bg-white/10 border-white/20 shadow-2xl h-full">
-                  <CardHeader>
-                    <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center mb-4">
-                      <Shield className="h-6 w-6 text-white" />
-                    </div>
-                    <CardTitle className="text-white">Insurance Protection</CardTitle>
-                    <CardDescription className="text-slate-300">
-                      Your funds are insured up to $250,000 per account
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="text-center">
-                      <div className="text-3xl font-bold text-white">$250K</div>
-                      <div className="text-slate-300 text-sm">Insurance coverage per account</div>
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-slate-300">Coverage Type</span>
-                        <span className="text-white">FDIC Insured</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-slate-300">Provider</span>
-                        <span className="text-white">Lloyd's of London</span>
-                      </div>
-                    </div>
-                    <Button className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700">
-                      Learn More
-                    </Button>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            </div>
           </TabsContent>
 
           <TabsContent value="automation" className="space-y-8">
@@ -523,36 +434,59 @@ export default function FeaturesPage() {
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="p-4 bg-white/5 rounded-lg border border-white/10">
-                        <div className="flex items-center justify-between mb-3">
-                          <h4 className="text-white font-medium">Beginner Course</h4>
-                          <Badge className="bg-green-600">Free</Badge>
+                      {/* How it works */}
+                      <div className="p-4 bg-white/5 rounded-lg border border-white/10 flex flex-col justify-between">
+                        <div>
+                          <h4 className="text-white font-medium mb-2">How It Works</h4>
+                          <ol className="list-decimal list-inside text-slate-300 text-sm space-y-1">
+                            <li>Share your unique referral link with friends.</li>
+                            <li>Your friends sign up and complete their first trade.</li>
+                            <li>You both earn crypto rewards instantly!</li>
+                          </ol>
                         </div>
-                        <p className="text-slate-300 text-sm mb-3">Learn the basics of cryptocurrency and trading</p>
-                        <Button size="sm" className="w-full bg-gradient-to-r from-green-600 to-emerald-600">
-                          Start Learning
-                        </Button>
                       </div>
-                      <div className="p-4 bg-white/5 rounded-lg border border-white/10">
-                        <div className="flex items-center justify-between mb-3">
-                          <h4 className="text-white font-medium">Technical Analysis</h4>
-                          <Badge className="bg-blue-600">Premium</Badge>
+                      {/* Rewards */}
+                      <div className="p-4 bg-white/5 rounded-lg border border-white/10 flex flex-col justify-between">
+                        <div>
+                          <h4 className="text-white font-medium mb-2">Rewards</h4>
+                          <ul className="text-slate-300 text-sm space-y-1">
+                            <li><span className="font-semibold text-green-400">$10</span> in BTC for each successful referral</li>
+                            <li>Your friend also gets <span className="font-semibold text-green-400">$10</span> in BTC</li>
+                            <li>No referral limit – invite as many as you want!</li>
+                          </ul>
                         </div>
-                        <p className="text-slate-300 text-sm mb-3">Master chart patterns and trading indicators</p>
-                        <Button size="sm" className="w-full bg-gradient-to-r from-blue-600 to-cyan-600">
-                          Unlock Course
-                        </Button>
                       </div>
-                      <div className="p-4 bg-white/5 rounded-lg border border-white/10">
-                        <div className="flex items-center justify-between mb-3">
-                          <h4 className="text-white font-medium">Advanced Strategies</h4>
-                          <Badge className="bg-purple-600">Pro</Badge>
+                      {/* Referral Link */}
+                      <div className="p-4 bg-white/5 rounded-lg border border-white/10 flex flex-col items-center justify-between text-center">
+                        <h4 className="text-white font-medium mb-2 w-full">Your Referral Link</h4>
+                        <div className="flex w-full items-center space-x-2 mb-2">
+                          <input
+                            type="text"
+                            value="https://bitzuri.com/ref/yourcode"
+                            readOnly
+                            className="flex-1 bg-transparent border border-white/20 rounded px-2 py-1 text-white text-xs text-center"
+                            style={{ minWidth: 0 }}
+                          />
+                          <Button size="sm" variant="secondary" className="bg-gradient-to-r from-purple-600 to-violet-600 text-white px-3 py-1 whitespace-nowrap">Copy</Button>
                         </div>
-                        <p className="text-slate-300 text-sm mb-3">
-                          Professional trading strategies and risk management
-                        </p>
-                        <Button size="sm" className="w-full bg-gradient-to-r from-purple-600 to-pink-600">
-                          Coming Soon
+                        <p className="text-slate-400 text-xs w-full">Share this link to invite friends</p>
+                      </div>
+                    </div>
+                    {/* Stats and CTA */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                      <div className="p-4 bg-white/5 rounded-lg border border-white/10 flex items-center justify-between">
+                        <div>
+                          <div className="text-slate-300 text-xs">Friends Invited</div>
+                          <div className="text-2xl font-bold text-white">3</div>
+                        </div>
+                        <div>
+                          <div className="text-slate-300 text-xs">Rewards Earned</div>
+                          <div className="text-2xl font-bold text-green-400">$30</div>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-center">
+                        <Button className="w-full bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-lg font-semibold">
+                          Invite Friends
                         </Button>
                       </div>
                     </div>

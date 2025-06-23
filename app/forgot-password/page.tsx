@@ -7,7 +7,7 @@ import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { ArrowRight, Mail, Shield, ArrowLeft } from "lucide-react"
+import { ArrowRight, Mail, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 
 export default function ForgotPasswordPage() {
@@ -68,12 +68,6 @@ export default function ForgotPasswordPage() {
             >
               <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
-                  <Shield className="w-4 h-4" />
-                </div>
-                <span className="text-white/90">Secure password reset process</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
                   <Mail className="w-4 h-4" />
                 </div>
                 <span className="text-white/90">Link expires in 15 minutes for security</span>
@@ -88,15 +82,6 @@ export default function ForgotPasswordPage() {
             transition={{ duration: 1, delay: 0.4 }}
             className="flex justify-center items-end space-x-8"
           >
-            {/* Shield */}
-            <motion.div
-              animate={{ y: [0, -10, 0] }}
-              transition={{ duration: 3, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
-              className="w-16 h-16 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center shadow-lg"
-            >
-              <Shield className="w-8 h-8 text-white" />
-            </motion.div>
-
             {/* Mail */}
             <motion.div
               animate={{ y: [0, -15, 0] }}

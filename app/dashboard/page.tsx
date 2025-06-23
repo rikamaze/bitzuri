@@ -15,7 +15,6 @@ import { PriceChange } from "@/components/shared/price-change"
 import { BalanceDisplay } from "@/components/shared/balance-display"
 import { QuickTrade } from "@/components/trading/quick-trade"
 import { SendReceive } from "@/components/wallet/send-receive"
-import { TransactionSecurity } from "@/components/security/transaction-security"
 import { RealTimeTracker } from "@/components/portfolio/real-time-tracker"
 import { ResponsiveContainer, AreaChart, Area, LineChart, Line } from "recharts"
 import { usePortfolio } from "@/lib/hooks/usePortfolio"
@@ -31,14 +30,11 @@ import {
   RefreshCw,
   Download,
   Zap,
-  Shield,
   Activity,
   Send,
 } from "lucide-react"
 import Link from "next/link"
 
-import { OnboardingFlow } from "@/components/onboarding/onboarding-flow"
-import { FeatureIntroduction } from "@/components/onboarding/feature-introduction"
 import { ProgressTracker } from "@/components/onboarding/progress-tracker"
 import { useOnboarding } from "@/hooks/useOnboarding"
 
@@ -341,13 +337,6 @@ export default function DashboardPage() {
                   <Activity className="h-3 w-3 mr-1" />
                   Portfolio
                 </TabsTrigger>
-                <TabsTrigger
-                  value="security"
-                  className="data-[state=active]:bg-white/20 data-[state=active]:text-white text-slate-300 text-sm"
-                >
-                  <Shield className="h-3 w-3 mr-1" />
-                  Security
-                </TabsTrigger>
               </TabsList>
 
               {/* Overview Tab */}
@@ -558,28 +547,11 @@ export default function DashboardPage() {
               <TabsContent value="portfolio" className="space-y-4">
                 <RealTimeTracker />
               </TabsContent>
-
-              {/* Security Tab */}
-              <TabsContent value="security" className="space-y-4">
-                <TransactionSecurity />
-              </TabsContent>
             </Tabs>
           </motion.div>
         </div>
 
         {/* Onboarding Components */}
-        <OnboardingFlow
-          isActive={onboarding.isFirstTime && !onboarding.completedTour}
-          onComplete={onboarding.completeTour}
-          onSkip={onboarding.skipTour}
-        />
-
-        <FeatureIntroduction
-          currentTab={selectedTab}
-          onDismiss={onboarding.dismissFeature}
-          dismissedFeatures={onboarding.dismissedFeatures}
-        />
-
         <ProgressTracker
           isVisible={onboarding.showProgressTracker}
           onClose={onboarding.toggleProgressTracker}

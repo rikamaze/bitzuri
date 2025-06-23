@@ -7,7 +7,7 @@ import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { ArrowRight, Mail, Shield, CheckCircle } from "lucide-react"
+import { ArrowRight, Mail, CheckCircle } from "lucide-react"
 import Link from "next/link"
 
 export default function VerifyEmailPage() {
@@ -76,12 +76,6 @@ export default function VerifyEmailPage() {
             >
               <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
-                  <Shield className="w-4 h-4" />
-                </div>
-                <span className="text-white/90">Enhanced security for your account</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
                   <CheckCircle className="w-4 h-4" />
                 </div>
                 <span className="text-white/90">Quick and easy verification process</span>
@@ -103,24 +97,6 @@ export default function VerifyEmailPage() {
               className="w-20 h-20 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg"
             >
               <Mail className="w-10 h-10 text-white" />
-            </motion.div>
-
-            {/* Security Shield */}
-            <motion.div
-              animate={{ y: [0, -15, 0] }}
-              transition={{ duration: 3, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut", delay: 0.5 }}
-              className="w-16 h-16 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center shadow-lg"
-            >
-              <Shield className="w-8 h-8 text-white" />
-            </motion.div>
-
-            {/* Check Mark */}
-            <motion.div
-              animate={{ y: [0, -12, 0] }}
-              transition={{ duration: 3, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut", delay: 1 }}
-              className="w-12 h-12 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full flex items-center justify-center shadow-lg"
-            >
-              <CheckCircle className="w-6 h-6 text-white" />
             </motion.div>
           </motion.div>
         </div>

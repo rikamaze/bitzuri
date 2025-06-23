@@ -7,7 +7,7 @@ import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Search, ArrowRight, Shield, Globe, MapPin } from "lucide-react"
+import { Search, ArrowRight, Globe, MapPin } from "lucide-react"
 
 export default function RegionPage() {
   const [selectedCountry, setSelectedCountry] = useState("")
@@ -90,12 +90,6 @@ export default function RegionPage() {
                   <Globe className="w-4 h-4" />
                 </div>
                 <span className="text-white/90">Available in 100+ countries worldwide</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
-                  <Shield className="w-4 h-4" />
-                </div>
-                <span className="text-white/90">Fully compliant with local regulations</span>
               </div>
               <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">

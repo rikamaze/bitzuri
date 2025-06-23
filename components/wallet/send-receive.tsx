@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, memo, useCallback, useEffect } from "react"
-import { motion } from "framer-motion"
 import dynamic from "next/dynamic"
 import QRCode from "react-qr-code"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -18,13 +17,17 @@ import { usePortfolio } from "@/lib/hooks/usePortfolio"
 import { useToast } from "@/components/ui/use-toast"
 import { sendTransaction, validateAddress, getNetworkFee, generateDepositAddress } from "@/lib/api/walletService"
 import { generateQRData, parseQRData } from "@/lib/api/qrService"
-import { Send, Download, Copy, QrCode, Shield, AlertTriangle, CheckCircle, Scan, Wallet, Clock, Camera, X } from "lucide-react"
+import { Send, Download, Copy, QrCode, AlertTriangle, CheckCircle, Scan, Wallet, Clock, Camera, X } from "lucide-react"
+import { motion } from "framer-motion"
 
 // Dynamically import QR Reader to avoid SSR issues
-const QrReader = dynamic(() => import('react-qr-reader'), { 
-  ssr: false,
-  loading: () => <div className="flex items-center justify-center h-64"><LoadingSpinner /></div>
-})
+const QrReader = dynamic(() =>
+  import('react-qr-reader').then(mod => mod.QrReader),
+  {
+    ssr: false,
+    loading: () => <div className="flex items-center justify-center h-64"><LoadingSpinner /></div>
+  }
+)
 
 export const SendReceive = memo(function SendReceive() {
   const [activeTab, setActiveTab] = useState("send")
@@ -61,6 +64,18 @@ export const SendReceive = memo(function SendReceive() {
       setAddressError("")
     }
   }, [recipientAddress, selectedAsset])
+
+  const canSend = useCallback(() => {
+    const amount = Number.parseFloat(sendAmount)
+    return (
+      recipientAddress.length > 0 &&
+      !addressError &&
+      sendAmount &&
+      amount > 0 &&
+      selectedHolding &&
+      selectedHolding.balance >= (amount + networkFee) // Include network fee
+    )
+  }, [recipientAddress, addressError, sendAmount, selectedHolding, networkFee])
 
   const handleSend = useCallback(async () => {
     if (!canSend()) return
@@ -100,18 +115,6 @@ export const SendReceive = memo(function SendReceive() {
       setIsProcessing(false)
     }
   }, [selectedAsset, recipientAddress, sendAmount, networkFee, canSend, toast, refreshPortfolio])
-
-  const canSend = useCallback(() => {
-    const amount = Number.parseFloat(sendAmount)
-    return (
-      recipientAddress.length > 0 &&
-      !addressError &&
-      sendAmount &&
-      amount > 0 &&
-      selectedHolding &&
-      selectedHolding.balance >= (amount + networkFee) // Include network fee
-    )
-  }, [recipientAddress, addressError, sendAmount, selectedHolding, networkFee])
 
   const handleQRScan = useCallback((data: string | null) => {
     if (data) {
@@ -347,7 +350,7 @@ export const SendReceive = memo(function SendReceive() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => copyToClipboard(transactionHash)}
+                      onClick={() => navigator.clipboard.writeText(transactionHash)}
                       className="text-purple-400 hover:text-purple-300"
                     >
                       <Copy className="h-4 w-4" />
@@ -431,7 +434,7 @@ export const SendReceive = memo(function SendReceive() {
               {/* Important Notice */}
               <div className="space-y-3">
                 <div className="flex items-center gap-2 p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
-                  <Shield className="h-4 w-4 text-blue-400" />
+                  <AlertTriangle className="h-4 w-4 text-blue-400" />
                   <span className="text-xs text-blue-300">
                     Only send {selectedAsset} to this address. Other assets will be lost.
                   </span>
@@ -459,22 +462,23 @@ export const SendReceive = memo(function SendReceive() {
           </DialogHeader>
           <div className="space-y-4">
             <div className="relative">
-              <QrReader
-                delay={300}
-                onError={(error) => {
-                  console.error('QR Scanner Error:', error)
-                  toast({
-                    title: "Scanner Error",
-                    description: "Unable to access camera. Please check permissions.",
-                    variant: "destructive",
-                  })
-                }}
-                onScan={handleQRScan}
-                style={{ width: '100%' }}
-                constraints={{
-                  video: { facingMode: 'environment' }
-                }}
-              />
+              <div style={{ width: '100%' }}>
+                <QrReader
+                  onResult={(result, error) => {
+                    if (result?.getText()) {
+                      handleQRScan(result.getText());
+                    } else if (error) {
+                      console.error('QR Scanner Error:', error);
+                      toast({
+                        title: "Scanner Error",
+                        description: "Unable to access camera. Please check permissions.",
+                        variant: "destructive",
+                      });
+                    }
+                  }}
+                  constraints={{ facingMode: "environment" }}
+                />
+              </div>
             </div>
             <div className="flex justify-between">
               <Button
