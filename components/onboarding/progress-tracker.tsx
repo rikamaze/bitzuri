@@ -67,22 +67,6 @@ export function ProgressTracker({ isVisible, onClose, onTaskComplete }: Progress
       category: "recommended",
     },
     {
-      id: "join-community",
-      title: "Join the Community",
-      description: "Make your first post or comment",
-      completed: false,
-      points: 50,
-      category: "recommended",
-    },
-    {
-      id: "complete-tutorial",
-      title: "Complete a Tutorial",
-      description: "Finish your first interactive tutorial",
-      completed: false,
-      points: 100,
-      category: "advanced",
-    },
-    {
       id: "set-alerts",
       title: "Set Price Alerts",
       description: "Create alerts for your favorite cryptocurrencies",

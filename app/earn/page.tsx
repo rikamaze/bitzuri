@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Coins, TrendingUp, Gift, Star, Target } from "lucide-react"
+import { Coins, TrendingUp } from "lucide-react"
 
 export default function EarnPage() {
   const [stakingAmount, setStakingAmount] = useState("")
@@ -85,18 +85,12 @@ export default function EarnPage() {
 
       <div className="max-w-7xl mx-auto">
         <Tabs defaultValue="staking" className="space-y-8">
-          <TabsList className="grid w-full grid-cols-4 bg-white/5 border border-white/10 max-w-2xl mx-auto">
+          <TabsList className="grid w-full grid-cols-2 bg-white/5 border border-white/10 max-w-2xl mx-auto">
             <TabsTrigger value="staking" className="data-[state=active]:bg-white/20">
               Staking
             </TabsTrigger>
             <TabsTrigger value="savings" className="data-[state=active]:bg-white/20">
               Savings
-            </TabsTrigger>
-            <TabsTrigger value="liquidity" className="data-[state=active]:bg-white/20">
-              Liquidity
-            </TabsTrigger>
-            <TabsTrigger value="rewards" className="data-[state=active]:bg-white/20">
-              Rewards
             </TabsTrigger>
           </TabsList>
 
@@ -284,189 +278,6 @@ export default function EarnPage() {
                   </Card>
                 </motion.div>
               ))}
-            </div>
-          </TabsContent>
-
-          <TabsContent value="liquidity" className="space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card className="backdrop-blur-md bg-white/10 border-white/20 shadow-2xl">
-                <CardHeader>
-                  <CardTitle className="text-white">Liquidity Mining</CardTitle>
-                  <CardDescription className="text-slate-300">
-                    Provide liquidity to trading pairs and earn fees
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-3">
-                    <div className="p-3 bg-white/5 rounded-lg border border-white/10">
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <h4 className="text-white font-medium">BTC/USDT</h4>
-                          <p className="text-slate-300 text-sm">High volume pair</p>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-lg font-bold text-green-400">18.5%</div>
-                          <div className="text-slate-300 text-xs">APY</div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="p-3 bg-white/5 rounded-lg border border-white/10">
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <h4 className="text-white font-medium">ETH/USDT</h4>
-                          <p className="text-slate-300 text-sm">Popular pair</p>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-lg font-bold text-green-400">22.3%</div>
-                          <div className="text-slate-300 text-xs">APY</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <Button className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700">
-                    Add Liquidity
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card className="backdrop-blur-md bg-white/10 border-white/20 shadow-2xl">
-                <CardHeader>
-                  <CardTitle className="text-white">Your Liquidity</CardTitle>
-                  <CardDescription className="text-slate-300">Manage your liquidity positions</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-white">$12,450</div>
-                    <div className="text-slate-300 text-sm">Total liquidity provided</div>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-slate-300">Fees Earned</span>
-                      <span className="text-green-400">$234.56</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-slate-300">Active Pairs</span>
-                      <span className="text-white">3</span>
-                    </div>
-                  </div>
-                  <Button className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
-                    Manage Positions
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="rewards" className="space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} whileHover={{ scale: 1.02 }}>
-                <Card className="backdrop-blur-md bg-white/10 border-white/20 shadow-2xl h-full">
-                  <CardHeader>
-                    <div className="w-12 h-12 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-lg flex items-center justify-center mb-4">
-                      <Gift className="h-6 w-6 text-white" />
-                    </div>
-                    <CardTitle className="text-white">Daily Check-in</CardTitle>
-                    <CardDescription className="text-slate-300">Earn rewards for daily platform usage</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-white">Day 5</div>
-                      <div className="text-slate-300 text-sm">Current streak</div>
-                    </div>
-                    <div className="grid grid-cols-7 gap-1">
-                      {[1, 2, 3, 4, 5, 6, 7].map((day) => (
-                        <div
-                          key={day}
-                          className={`w-8 h-8 rounded flex items-center justify-center text-xs ${
-                            day <= 5 ? "bg-green-600 text-white" : "bg-white/10 text-slate-400"
-                          }`}
-                        >
-                          {day}
-                        </div>
-                      ))}
-                    </div>
-                    <Button className="w-full bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700">
-                      Claim Today's Reward
-                    </Button>
-                  </CardContent>
-                </Card>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-                whileHover={{ scale: 1.02 }}
-              >
-                <Card className="backdrop-blur-md bg-white/10 border-white/20 shadow-2xl h-full">
-                  <CardHeader>
-                    <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mb-4">
-                      <Star className="h-6 w-6 text-white" />
-                    </div>
-                    <CardTitle className="text-white">Trading Rewards</CardTitle>
-                    <CardDescription className="text-slate-300">Earn cashback on every trade</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-white">0.1%</div>
-                      <div className="text-slate-300 text-sm">Cashback rate</div>
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-slate-300">This Month</span>
-                        <span className="text-green-400">$45.67</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-slate-300">Total Earned</span>
-                        <span className="text-white">$234.89</span>
-                      </div>
-                    </div>
-                    <Button className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
-                      View Details
-                    </Button>
-                  </CardContent>
-                </Card>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                whileHover={{ scale: 1.02 }}
-              >
-                <Card className="backdrop-blur-md bg-white/10 border-white/20 shadow-2xl h-full">
-                  <CardHeader>
-                    <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-teal-500 rounded-lg flex items-center justify-center mb-4">
-                      <Target className="h-6 w-6 text-white" />
-                    </div>
-                    <CardTitle className="text-white">Achievement Badges</CardTitle>
-                    <CardDescription className="text-slate-300">
-                      Unlock rewards by completing challenges
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-white">8/12</div>
-                      <div className="text-slate-300 text-sm">Badges earned</div>
-                    </div>
-                    <div className="grid grid-cols-4 gap-2">
-                      {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((badge) => (
-                        <div
-                          key={badge}
-                          className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                            badge <= 8 ? "bg-gradient-to-r from-green-500 to-teal-500" : "bg-white/10"
-                          }`}
-                        >
-                          <Star className={`w-4 h-4 ${badge <= 8 ? "text-white" : "text-slate-400"}`} />
-                        </div>
-                      ))}
-                    </div>
-                    <Button className="w-full bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700">
-                      View Challenges
-                    </Button>
-                  </CardContent>
-                </Card>
-              </motion.div>
             </div>
           </TabsContent>
         </Tabs>

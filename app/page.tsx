@@ -47,10 +47,7 @@ export default function LoginPage() {
 
         <div className="relative z-10 flex flex-col justify-between p-12 text-white w-full">
           {/* Logo */}
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center border border-white/30">
-              <span className="text-white font-bold text-lg">B</span>
-            </div>
+          <div className="flex items-center">
             <span className="text-2xl font-bold">BITZURI</span>
           </div>
 
@@ -134,10 +131,7 @@ export default function LoginPage() {
           className="w-full max-w-md space-y-8"
         >
           {/* Mobile Logo */}
-          <div className="lg:hidden flex items-center justify-center space-x-3 mb-8">
-            <div className="w-10 h-10 bg-gradient-to-r from-purple-600 to-cyan-600 rounded-xl flex items-center justify-center">
-              <span className="text-white font-bold text-lg">B</span>
-            </div>
+          <div className="lg:hidden flex items-center justify-center mb-8">
             <span className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">
               BITZURI
             </span>

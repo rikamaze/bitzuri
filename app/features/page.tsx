@@ -14,7 +14,6 @@ import {
   TrendingUp,
   Calendar,
   Users,
-  BookOpen,
   Wallet,
   Target,
   Repeat,
@@ -77,15 +76,12 @@ export default function FeaturesPage() {
 
       <div className="max-w-7xl mx-auto">
         <Tabs defaultValue="trading" className="space-y-8">
-          <TabsList className="grid w-full grid-cols-3 bg-white/5 border border-white/10 max-w-2xl mx-auto">
+          <TabsList className="grid w-full grid-cols-2 bg-white/5 border border-white/10 max-w-2xl mx-auto">
             <TabsTrigger value="trading" className="data-[state=active]:bg-white/20">
               Trading
             </TabsTrigger>
             <TabsTrigger value="automation" className="data-[state=active]:bg-white/20">
               Automation
-            </TabsTrigger>
-            <TabsTrigger value="social" className="data-[state=active]:bg-white/20">
-              Social
             </TabsTrigger>
           </TabsList>
 
@@ -368,179 +364,6 @@ export default function FeaturesPage() {
                 </Card>
               </motion.div>
             </div>
-          </TabsContent>
-
-          <TabsContent value="social" className="space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-                <Card className="backdrop-blur-md bg-white/10 border-white/20 shadow-2xl h-full">
-                  <CardHeader>
-                    <div className="w-12 h-12 bg-gradient-to-r from-pink-500 to-rose-500 rounded-lg flex items-center justify-center mb-4">
-                      <Users className="h-6 w-6 text-white" />
-                    </div>
-                    <CardTitle className="text-white">Copy Trading</CardTitle>
-                    <CardDescription className="text-slate-300">
-                      Follow and automatically copy successful traders
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between p-3 bg-white/5 rounded-lg">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center">
-                            <span className="text-white text-xs font-bold">JD</span>
-                          </div>
-                          <div>
-                            <p className="text-white text-sm font-medium">John Doe</p>
-                            <p className="text-green-400 text-xs">+24.5% this month</p>
-                          </div>
-                        </div>
-                        <Button size="sm" className="bg-gradient-to-r from-pink-600 to-rose-600">
-                          Follow
-                        </Button>
-                      </div>
-                      <div className="flex items-center justify-between p-3 bg-white/5 rounded-lg">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center">
-                            <span className="text-white text-xs font-bold">AS</span>
-                          </div>
-                          <div>
-                            <p className="text-white text-sm font-medium">Alice Smith</p>
-                            <p className="text-green-400 text-xs">+18.2% this month</p>
-                          </div>
-                        </div>
-                        <Button size="sm" className="bg-gradient-to-r from-pink-600 to-rose-600">
-                          Follow
-                        </Button>
-                      </div>
-                    </div>
-                    <Button className="w-full bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700">
-                      Explore Traders
-                    </Button>
-                  </CardContent>
-                </Card>
-              </motion.div>
-
-              <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
-                <Card className="backdrop-blur-md bg-white/10 border-white/20 shadow-2xl h-full">
-                  <CardHeader>
-                    <div className="w-12 h-12 bg-gradient-to-r from-violet-500 to-purple-500 rounded-lg flex items-center justify-center mb-4">
-                      <Gift className="h-6 w-6 text-white" />
-                    </div>
-                    <CardTitle className="text-white">Referral Program</CardTitle>
-                    <CardDescription className="text-slate-300">
-                      Earn rewards by inviting friends to BITZURI
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      {/* How it works */}
-                      <div className="p-4 bg-white/5 rounded-lg border border-white/10 flex flex-col justify-between">
-                        <div>
-                          <h4 className="text-white font-medium mb-2">How It Works</h4>
-                          <ol className="list-decimal list-inside text-slate-300 text-sm space-y-1">
-                            <li>Share your unique referral link with friends.</li>
-                            <li>Your friends sign up and complete their first trade.</li>
-                            <li>You both earn crypto rewards instantly!</li>
-                          </ol>
-                        </div>
-                      </div>
-                      {/* Rewards */}
-                      <div className="p-4 bg-white/5 rounded-lg border border-white/10 flex flex-col justify-between">
-                        <div>
-                          <h4 className="text-white font-medium mb-2">Rewards</h4>
-                          <ul className="text-slate-300 text-sm space-y-1">
-                            <li><span className="font-semibold text-green-400">$10</span> in BTC for each successful referral</li>
-                            <li>Your friend also gets <span className="font-semibold text-green-400">$10</span> in BTC</li>
-                            <li>No referral limit – invite as many as you want!</li>
-                          </ul>
-                        </div>
-                      </div>
-                      {/* Referral Link */}
-                      <div className="p-4 bg-white/5 rounded-lg border border-white/10 flex flex-col items-center justify-between text-center">
-                        <h4 className="text-white font-medium mb-2 w-full">Your Referral Link</h4>
-                        <div className="flex w-full items-center space-x-2 mb-2">
-                          <input
-                            type="text"
-                            value="https://bitzuri.com/ref/yourcode"
-                            readOnly
-                            className="flex-1 bg-transparent border border-white/20 rounded px-2 py-1 text-white text-xs text-center"
-                            style={{ minWidth: 0 }}
-                          />
-                          <Button size="sm" variant="secondary" className="bg-gradient-to-r from-purple-600 to-violet-600 text-white px-3 py-1 whitespace-nowrap">Copy</Button>
-                        </div>
-                        <p className="text-slate-400 text-xs w-full">Share this link to invite friends</p>
-                      </div>
-                    </div>
-                    {/* Stats and CTA */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                      <div className="p-4 bg-white/5 rounded-lg border border-white/10 flex items-center justify-between">
-                        <div>
-                          <div className="text-slate-300 text-xs">Friends Invited</div>
-                          <div className="text-2xl font-bold text-white">3</div>
-                        </div>
-                        <div>
-                          <div className="text-slate-300 text-xs">Rewards Earned</div>
-                          <div className="text-2xl font-bold text-green-400">$30</div>
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-center">
-                        <Button className="w-full bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-lg font-semibold">
-                          Invite Friends
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            </div>
-
-            {/* Learning Center */}
-            <Card className="backdrop-blur-md bg-white/10 border-white/20 shadow-2xl">
-              <CardHeader>
-                <CardTitle className="text-white flex items-center">
-                  <BookOpen className="h-5 w-5 mr-2" />
-                  BITZURI Academy
-                </CardTitle>
-                <CardDescription className="text-slate-300">
-                  Learn crypto trading from beginner to advanced levels
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="p-4 bg-white/5 rounded-lg border border-white/10">
-                    <div className="flex items-center justify-between mb-3">
-                      <h4 className="text-white font-medium">Beginner Course</h4>
-                      <Badge className="bg-green-600">Free</Badge>
-                    </div>
-                    <p className="text-slate-300 text-sm mb-3">Learn the basics of cryptocurrency and trading</p>
-                    <Button size="sm" className="w-full bg-gradient-to-r from-green-600 to-emerald-600">
-                      Start Learning
-                    </Button>
-                  </div>
-                  <div className="p-4 bg-white/5 rounded-lg border border-white/10">
-                    <div className="flex items-center justify-between mb-3">
-                      <h4 className="text-white font-medium">Technical Analysis</h4>
-                      <Badge className="bg-blue-600">Premium</Badge>
-                    </div>
-                    <p className="text-slate-300 text-sm mb-3">Master chart patterns and trading indicators</p>
-                    <Button size="sm" className="w-full bg-gradient-to-r from-blue-600 to-cyan-600">
-                      Unlock Course
-                    </Button>
-                  </div>
-                  <div className="p-4 bg-white/5 rounded-lg border border-white/10">
-                    <div className="flex items-center justify-between mb-3">
-                      <h4 className="text-white font-medium">Advanced Strategies</h4>
-                      <Badge className="bg-purple-600">Pro</Badge>
-                    </div>
-                    <p className="text-slate-300 text-sm mb-3">Professional trading strategies and risk management</p>
-                    <Button size="sm" className="w-full bg-gradient-to-r from-purple-600 to-pink-600">
-                      Coming Soon
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
           </TabsContent>
         </Tabs>
       </div>

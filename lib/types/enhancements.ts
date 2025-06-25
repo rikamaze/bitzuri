@@ -22,7 +22,7 @@ export interface Achievement {
   description: string
   icon: string
   unlockedAt: string
-  category: "Trading" | "Learning" | "Social" | "Portfolio"
+  category: "Trading" | "Portfolio"
   rarity: "Common" | "Rare" | "Epic" | "Legendary"
 }
 
@@ -37,7 +37,6 @@ export interface NotificationSettings {
   priceAlerts: boolean
   portfolioUpdates: boolean
   newsUpdates: boolean
-  socialActivity: boolean
   tradingSignals: boolean
   emailNotifications: boolean
   pushNotifications: boolean
@@ -54,43 +53,7 @@ export interface Recommendation {
   potentialReturn: number
   riskLevel: "Low" | "Medium" | "High"
   timeframe: string
-  category: "AI" | "Technical" | "Fundamental" | "Social"
-}
-
-export interface TutorialStep {
-  id: string
-  title: string
-  description: string
-  target: string
-  content: React.ReactNode
-  action?: "click" | "hover" | "input"
-  position: "top" | "bottom" | "left" | "right"
-}
-
-export interface Tutorial {
-  id: string
-  title: string
-  description: string
-  category: "Getting Started" | "Trading" | "Portfolio" | "Advanced"
-  difficulty: "Beginner" | "Intermediate" | "Advanced"
-  estimatedTime: number
-  steps: TutorialStep[]
-  prerequisites?: string[]
-}
-
-export interface CommunityPost {
-  id: string
-  author: UserProfile
-  content: string
-  images?: string[]
-  tags: string[]
-  likes: number
-  comments: number
-  shares: number
-  createdAt: string
-  category: "Discussion" | "Analysis" | "News" | "Question" | "Strategy"
-  isPinned?: boolean
-  isVerified?: boolean
+  category: "AI" | "Technical" | "Fundamental"
 }
 
 export interface TradingSignal {
@@ -103,7 +66,7 @@ export interface TradingSignal {
   confidence: number
   timeframe: string
   analysis: string
-  provider: "AI" | "Expert" | "Community"
+  provider: "AI" | "Expert"
   createdAt: string
 }
 
