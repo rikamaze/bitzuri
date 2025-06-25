@@ -2,17 +2,71 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: Arial, Helvetica, sans-serif;
-}
-
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+  
+  .gradient-text {
+    @apply bg-gradient-to-r from-white via-purple-200 to-cyan-200 bg-clip-text text-transparent;
+  }
+  
+  .card-glass {
+    @apply backdrop-blur-md bg-white/10 border-white/20 shadow-xl;
+  }
+  
+  .hover-effect {
+    @apply transition-all duration-200 ease-in-out;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white hover-effect;
+  }
+  
+  .btn-secondary {
+    @apply bg-white/10 hover:bg-white/15 border-white/20 text-white hover-effect;
+  }
+  
+  .btn-danger {
+    @apply bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white hover-effect;
+  }
+  
+  .input-field {
+    @apply bg-slate-800 border-white/10 text-white placeholder:text-slate-500 focus:border-purple-500 focus:ring-purple-500/20 hover-effect;
+  }
 }
 
 @layer base {
+  body {
+    @apply antialiased text-white bg-slate-900;
+  }
+  
+  h1 {
+    @apply text-2xl font-bold tracking-tight;
+  }
+  
+  h2 {
+    @apply text-xl font-semibold tracking-tight;
+  }
+  
+  h3 {
+    @apply text-lg font-medium;
+  }
+  
+  h4 {
+    @apply text-base font-medium;
+  }
+  
+  p {
+    @apply text-sm text-slate-300;
+  }
+  
+  a {
+    @apply text-purple-400 hover:text-purple-300 hover-effect;
+  }
+  
   :root {
     --background: 0 0% 100%;
     --foreground: 0 0% 3.9%;
