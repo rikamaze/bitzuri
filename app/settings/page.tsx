@@ -31,19 +31,6 @@ import {
   X
 } from "lucide-react"
 
-const appearanceFormSchema = z.object({
-  theme: z.enum(["light", "dark", "system"], {
-    required_error: "Please select a theme.",
-  }),
-  fontSize: z.number().min(12).max(20),
-  currency: z.string({
-    required_error: "Please select a display currency.",
-  }),
-  language: z.string({
-    required_error: "Please select a language.",
-  }),
-})
-
 const notificationFormSchema = z.object({
   emailNotifications: z.boolean().default(true),
   pushNotifications: z.boolean().default(true),
@@ -83,18 +70,8 @@ const accountSetupSchema = z.object({
 })
 
 export default function SettingsPage() {
-  const [activeTab, setActiveTab] = useState("appearance")
+  const [activeTab, setActiveTab] = useState("notifications")
   const router = useRouter()
-  
-  const appearanceForm = useForm<z.infer<typeof appearanceFormSchema>>({
-    resolver: zodResolver(appearanceFormSchema),
-    defaultValues: {
-      theme: "dark",
-      fontSize: 16,
-      currency: "usd",
-      language: "en",
-    },
-  })
   
   const notificationForm = useForm<z.infer<typeof notificationFormSchema>>({
     resolver: zodResolver(notificationFormSchema),
@@ -140,11 +117,6 @@ export default function SettingsPage() {
     },
   })
 
-  function onAppearanceSubmit(values: z.infer<typeof appearanceFormSchema>) {
-    console.log(values)
-    toast.success("Appearance settings saved!")
-  }
-  
   function onNotificationSubmit(values: z.infer<typeof notificationFormSchema>) {
     console.log(values)
     toast.success("Notification settings saved!")
@@ -186,13 +158,6 @@ export default function SettingsPage() {
             <CardContent className="p-4">
               <TabsList className="flex flex-col space-y-2 bg-transparent p-0">
                 <TabsTrigger 
-                  value="appearance"
-                  className="w-full justify-start data-[state=active]:bg-white/10 data-[state=active]:text-white"
-                >
-                  <Monitor className="mr-2 h-4 w-4" />
-                  Appearance
-                </TabsTrigger>
-                <TabsTrigger 
                   value="notifications"
                   className="w-full justify-start data-[state=active]:bg-white/10 data-[state=active]:text-white"
                 >
@@ -221,13 +186,6 @@ export default function SettingsPage() {
                   <User className="mr-2 h-4 w-4" />
                   Profile
                 </Button>
-                <TabsTrigger 
-                  value="language"
-                  className="w-full justify-start data-[state=active]:bg-white/10 data-[state=active]:text-white"
-                >
-                  <Languages className="mr-2 h-4 w-4" />
-                  Language & Region
-                </TabsTrigger>
                 <TabsTrigger 
                   value="account-setup"
                   className="w-full justify-start data-[state=active]:bg-white/10 data-[state=active]:text-white"
@@ -278,154 +236,6 @@ export default function SettingsPage() {
         
         {/* Main Content */}
         <div className="md:col-span-3">
-          <TabsContent value="appearance" className="mt-0" forceMount={activeTab === "appearance"}>
-            <Card className="card-glass border rounded-xl overflow-hidden">
-              <CardHeader>
-                <CardTitle className="gradient-text">Appearance</CardTitle>
-                <CardDescription>
-                  Customize how Bitzuri looks and feels.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Form {...appearanceForm}>
-                  <form onSubmit={appearanceForm.handleSubmit(onAppearanceSubmit)} className="space-y-8">
-                    <FormField
-                      control={appearanceForm.control}
-                      name="theme"
-                      render={({ field }) => (
-                        <FormItem className="space-y-4">
-                          <FormLabel>Theme</FormLabel>
-                          <FormControl>
-                            <RadioGroup
-                              onValueChange={field.onChange}
-                              defaultValue={field.value}
-                              className="grid grid-cols-3 gap-4"
-                            >
-                              <FormItem className="flex flex-col items-center space-y-3 rounded-lg border border-white/10 p-4 hover:bg-white/5">
-                                <FormControl>
-                                  <RadioGroupItem value="light" className="sr-only" />
-                                </FormControl>
-                                <div className="w-full h-24 rounded-md bg-white"></div>
-                                <FormLabel className="font-normal">Light</FormLabel>
-                              </FormItem>
-                              <FormItem className="flex flex-col items-center space-y-3 rounded-lg border border-white/10 p-4 hover:bg-white/5">
-                                <FormControl>
-                                  <RadioGroupItem value="dark" className="sr-only" />
-                                </FormControl>
-                                <div className="w-full h-24 rounded-md bg-slate-900"></div>
-                                <FormLabel className="font-normal">Dark</FormLabel>
-                              </FormItem>
-                              <FormItem className="flex flex-col items-center space-y-3 rounded-lg border border-white/10 p-4 hover:bg-white/5">
-                                <FormControl>
-                                  <RadioGroupItem value="system" className="sr-only" />
-                                </FormControl>
-                                <div className="w-full h-24 rounded-md bg-gradient-to-r from-slate-900 to-white"></div>
-                                <FormLabel className="font-normal">System</FormLabel>
-                              </FormItem>
-                            </RadioGroup>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={appearanceForm.control}
-                      name="fontSize"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Font Size</FormLabel>
-                          <div className="flex items-center space-x-4">
-                            <FormControl>
-                              <Slider
-                                min={12}
-                                max={20}
-                                step={1}
-                                defaultValue={[field.value]}
-                                onValueChange={(value) => field.onChange(value[0])}
-                                className="w-full"
-                              />
-                            </FormControl>
-                            <span className="w-12 text-center">{field.value}px</span>
-                          </div>
-                          <FormDescription>
-                            Adjust the font size for better readability.
-                          </FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <FormField
-                        control={appearanceForm.control}
-                        name="currency"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Display Currency</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
-                              <FormControl>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Select display currency" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                <SelectItem value="usd">USD ($)</SelectItem>
-                                <SelectItem value="eur">EUR (€)</SelectItem>
-                                <SelectItem value="gbp">GBP (£)</SelectItem>
-                                <SelectItem value="jpy">JPY (¥)</SelectItem>
-                                <SelectItem value="btc">BTC (₿)</SelectItem>
-                                <SelectItem value="eth">ETH (Ξ)</SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <FormDescription>
-                              Currency used to display prices and values.
-                            </FormDescription>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      
-                      <FormField
-                        control={appearanceForm.control}
-                        name="language"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Language</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
-                              <FormControl>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Select language" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                <SelectItem value="en">English</SelectItem>
-                                <SelectItem value="es">Español</SelectItem>
-                                <SelectItem value="fr">Français</SelectItem>
-                                <SelectItem value="de">Deutsch</SelectItem>
-                                <SelectItem value="ja">日本語</SelectItem>
-                                <SelectItem value="zh">中文</SelectItem>
-                                <SelectItem value="ko">한국어</SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <FormDescription>
-                              Your preferred language for the platform.
-                            </FormDescription>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                    
-                    <div className="flex justify-end">
-                      <Button type="submit">Save Appearance Settings</Button>
-                    </div>
-                  </form>
-                </Form>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
           <TabsContent value="notifications" className="mt-0" forceMount={activeTab === "notifications"}>
             <Card className="card-glass border rounded-xl overflow-hidden">
               <CardHeader>
@@ -871,106 +681,6 @@ export default function SettingsPage() {
                     </div>
                   </form>
                 </Form>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          <TabsContent value="language" className="mt-0" forceMount={activeTab === "language"}>
-            <Card className="border-white/10 bg-slate-900/50 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle>Language & Region</CardTitle>
-                <CardDescription>
-                  Set your preferred language and regional settings.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-4">
-                  <h3 className="text-lg font-medium">Language</h3>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    <div className="flex items-center space-x-3 rounded-lg border border-white/10 p-4 hover:bg-white/5 cursor-pointer">
-                      <Check className="h-5 w-5 text-green-500" />
-                      <div>
-                        <p className="font-medium">English</p>
-                        <p className="text-sm text-slate-400">English (US)</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-3 rounded-lg border border-white/10 p-4 hover:bg-white/5 cursor-pointer">
-                      <div className="h-5 w-5"></div>
-                      <div>
-                        <p className="font-medium">Español</p>
-                        <p className="text-sm text-slate-400">Spanish</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-3 rounded-lg border border-white/10 p-4 hover:bg-white/5 cursor-pointer">
-                      <div className="h-5 w-5"></div>
-                      <div>
-                        <p className="font-medium">Français</p>
-                        <p className="text-sm text-slate-400">French</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-3 rounded-lg border border-white/10 p-4 hover:bg-white/5 cursor-pointer">
-                      <div className="h-5 w-5"></div>
-                      <div>
-                        <p className="font-medium">Deutsch</p>
-                        <p className="text-sm text-slate-400">German</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-3 rounded-lg border border-white/10 p-4 hover:bg-white/5 cursor-pointer">
-                      <div className="h-5 w-5"></div>
-                      <div>
-                        <p className="font-medium">日本語</p>
-                        <p className="text-sm text-slate-400">Japanese</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-3 rounded-lg border border-white/10 p-4 hover:bg-white/5 cursor-pointer">
-                      <div className="h-5 w-5"></div>
-                      <div>
-                        <p className="font-medium">中文</p>
-                        <p className="text-sm text-slate-400">Chinese (Simplified)</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                <Separator className="bg-white/10" />
-                
-                <div className="space-y-4">
-                  <h3 className="text-lg font-medium">Region</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="text-sm font-medium mb-2 block">Time Zone</label>
-                      <Select defaultValue="utc">
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select time zone" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="utc">UTC (Coordinated Universal Time)</SelectItem>
-                          <SelectItem value="est">EST (Eastern Standard Time)</SelectItem>
-                          <SelectItem value="pst">PST (Pacific Standard Time)</SelectItem>
-                          <SelectItem value="gmt">GMT (Greenwich Mean Time)</SelectItem>
-                          <SelectItem value="jst">JST (Japan Standard Time)</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium mb-2 block">Date Format</label>
-                      <Select defaultValue="mdy">
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select date format" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="mdy">MM/DD/YYYY</SelectItem>
-                          <SelectItem value="dmy">DD/MM/YYYY</SelectItem>
-                          <SelectItem value="ymd">YYYY/MM/DD</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="flex justify-end">
-                  <Button>Save Language & Region Settings</Button>
-                </div>
               </CardContent>
             </Card>
           </TabsContent>
