@@ -15,16 +15,33 @@ const generateData = () => {
     return data;
 };
 
+export interface PriceChartProps {
+  symbol?: string;
+}
 
-export function PriceChart() {
-    const data = useMemo(()=>(generateData()), [])
+const symbolToName: Record<string, string> = {
+  BTC: "Bitcoin",
+  ETH: "Ethereum",
+  USDT: "Tether",
+  BNB: "Binance Coin",
+  SOL: "Solana",
+  XRP: "XRP",
+  ADA: "Cardano",
+  LTC: "Litecoin",
+  UNI: "Uniswap",
+  PEPE: "Pepe",
+};
+
+export function PriceChart({ symbol = "BTC" }: PriceChartProps) {
+    const data = useMemo(()=>(generateData()), [symbol])
+    const name = symbolToName[symbol] || symbol;
     return (
         <Card className="backdrop-blur-md bg-white/10 border-white/20 shadow-2xl text-white h-full">
             <CardHeader>
                 <div className="flex justify-between items-center">
                     <div>
-                        <CardTitle className="text-lg">BTC/USD</CardTitle>
-                        <CardDescription className="text-slate-400">Bitcoin to US Dollar</CardDescription>
+                        <CardTitle className="text-lg">{symbol}/USD</CardTitle>
+                        <CardDescription className="text-slate-400">{name} to US Dollar</CardDescription>
                     </div>
                     <div className="text-right">
                         <p className="text-2xl font-bold">$67,339.80</p>

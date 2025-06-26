@@ -19,10 +19,14 @@ import { useMarketData } from "@/lib/hooks/useMarketData"
 import { Separator } from "@/components/ui/separator"
 import { createOrder, calculateTradingFee } from "@/lib/api/tradeService"
 
-export function TradeForm() {
+export interface TradeFormProps {
+  symbol?: string;
+}
+
+export function TradeForm({ symbol }: TradeFormProps) {
   const [orderType, setOrderType] = useState("market") // market or limit
   const [side, setSide] = useState("buy") // buy or sell
-  const [selectedAssetSymbol, setSelectedAssetSymbol] = useState("BTC")
+  const [selectedAssetSymbol, setSelectedAssetSymbol] = useState(symbol || "BTC")
   const [amount, setAmount] = useState("") // in quote currency (e.g. USD) for market, in base (e.g. BTC) for limit
   const [limitPrice, setLimitPrice] = useState("")
   const [total, setTotal] = useState("") // total in quote currency
@@ -56,6 +60,11 @@ export function TradeForm() {
     }
   }, [selectedAsset])
 
+  useEffect(() => {
+    if (symbol && symbol !== selectedAssetSymbol) {
+      setSelectedAssetSymbol(symbol);
+    }
+  }, [symbol]);
 
   async function onSubmit() {
     setIsProcessing(true);

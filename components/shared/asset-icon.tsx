@@ -65,6 +65,19 @@ const cryptoNameToSymbolMap: { [key: string]: string } = {
     CHZ: "chiliz",
 };
 
+const localLogoMap: { [key: string]: string } = {
+  BTC: "/logos/bitcoin-btc-logo.svg",
+  ETH: "/logos/ethereum-eth-logo.svg",
+  USDT: "/logos/tether-usdt-logo.svg",
+  BNB: "/logos/bnb-bnb-logo.svg",
+  SOL: "/logos/solana-sol-logo.svg",
+  XRP: "/logos/xrp-xrp-logo.svg",
+  ADA: "/logos/cardano-ada-logo.svg",
+  LTC: "/logos/litecoin-ltc-logo.svg",
+  UNI: "/logos/uniswap-uni-logo.svg",
+  PEPE: "/logos/pepe-pepe-logo.svg",
+};
+
 export const AssetIcon = memo(function AssetIcon({ 
   symbol, 
   color, 
@@ -83,11 +96,15 @@ export const AssetIcon = memo(function AssetIcon({
     }
 
     const upperSymbol = symbol.toUpperCase();
-    const name = cryptoNameToSymbolMap[upperSymbol];
-    if (name) {
-      setImgSrc(`https://cryptologos.cc/logos/${name}-${upperSymbol.toLowerCase()}-logo.svg`);
+    if (localLogoMap[upperSymbol]) {
+      setImgSrc(localLogoMap[upperSymbol]);
     } else {
+      const name = cryptoNameToSymbolMap[upperSymbol];
+      if (name) {
+        setImgSrc(`https://cryptologos.cc/logos/${name}-${upperSymbol.toLowerCase()}-logo.svg`);
+      } else {
         setImgSrc(undefined);
+      }
     }
     setHasError(false);
   }, [symbol, iconUrl]);

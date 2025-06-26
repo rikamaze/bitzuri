@@ -2,24 +2,43 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
-// Dummy data with cumulative total
-const asksData = [
-    { price: 67341.1, amount: 0.1, total: 0.1 },
-    { price: 67341.0, amount: 0.5, total: 0.6 },
-    { price: 67340.5, amount: 1.2, total: 1.8 },
-    { price: 67339.9, amount: 2.0, total: 3.8 },
-    { price: 67338.2, amount: 0.8, total: 4.6 },
-];
+export interface OrderBookProps {
+  symbol?: string;
+}
 
-const bidsData = [
-    { price: 67338.1, amount: 0.7, total: 0.7 },
-    { price: 67337.5, amount: 1.1, total: 1.8 },
-    { price: 67336.9, amount: 0.9, total: 2.7 },
-    { price: 67335.0, amount: 2.5, total: 5.2 },
-    { price: 67334.8, amount: 3.0, total: 8.2 },
-];
+function generateOrderBookData(symbol: string) {
+  // Generate dummy data based on symbol for demo
+  const basePrice = {
+    BTC: 67340,
+    ETH: 2650,
+    USDT: 1,
+    BNB: 315,
+    SOL: 98,
+    XRP: 0.62,
+    ADA: 0.48,
+    LTC: 85,
+    UNI: 6.2,
+    PEPE: 0.0000012,
+  }[symbol] || 100;
+  const asks = Array.from({ length: 5 }, (_, i) => ({
+    price: basePrice + (5 - i) * (basePrice * 0.001),
+    amount: (Math.random() * 2 + 0.1),
+    total: 0, // will be filled below
+  }));
+  let askTotal = 0;
+  asks.forEach(a => { askTotal += a.amount; a.total = askTotal; });
+  const bids = Array.from({ length: 5 }, (_, i) => ({
+    price: basePrice - (i + 1) * (basePrice * 0.001),
+    amount: (Math.random() * 2 + 0.1),
+    total: 0,
+  }));
+  let bidTotal = 0;
+  bids.forEach(b => { bidTotal += b.amount; b.total = bidTotal; });
+  return { asks, bids, mid: basePrice };
+}
 
-export function OrderBook() {
+export function OrderBook({ symbol = "BTC" }: OrderBookProps) {
+  const { asks, bids, mid } = generateOrderBookData(symbol);
   return (
     <Card className="backdrop-blur-md bg-white/10 border-white/20 shadow-2xl text-white">
       <CardHeader className="p-4">
@@ -30,35 +49,35 @@ export function OrderBook() {
           <TableHeader>
             <TableRow className="border-b-white/10">
               <TableHead className="p-2 text-left text-slate-400">Price (USD)</TableHead>
-              <TableHead className="p-2 text-right text-slate-400">Amount (BTC)</TableHead>
-              <TableHead className="p-2 text-right text-slate-400">Total (BTC)</TableHead>
+              <TableHead className="p-2 text-right text-slate-400">Amount ({symbol})</TableHead>
+              <TableHead className="p-2 text-right text-slate-400">Total ({symbol})</TableHead>
             </TableRow>
           </TableHeader>
         </Table>
         <div className="max-h-48 overflow-y-auto">
             <Table>
                 <TableBody>
-                    {asksData.slice(0).reverse().map((order, index) => (
+                    {asks.slice(0).reverse().map((order, index) => (
                     <TableRow key={index} className="border-0">
-                        <TableCell className="p-1 text-red-400">{order.price.toFixed(2)}</TableCell>
-                        <TableCell className="p-1 text-right">{order.amount.toFixed(4)}</TableCell>
-                        <TableCell className="p-1 text-right">{order.total.toFixed(4)}</TableCell>
+                        <TableCell className="p-1 text-red-400">{order.price.toFixed(6)}</TableCell>
+                        <TableCell className="p-1 text-right">{order.amount.toFixed(6)}</TableCell>
+                        <TableCell className="p-1 text-right">{order.total.toFixed(6)}</TableCell>
                     </TableRow>
                     ))}
                 </TableBody>
             </Table>
         </div>
         <div className="py-2 text-center font-bold text-lg border-y border-y-white/10">
-            $67,339.80
+            ${mid.toLocaleString(undefined, { maximumFractionDigits: 6 })}
         </div>
         <div className="max-h-48 overflow-y-auto">
             <Table>
                 <TableBody>
-                    {bidsData.map((order, index) => (
+                    {bids.map((order, index) => (
                     <TableRow key={index} className="border-0">
-                        <TableCell className="p-1 text-green-400">{order.price.toFixed(2)}</TableCell>
-                        <TableCell className="p-1 text-right">{order.amount.toFixed(4)}</TableCell>
-                        <TableCell className="p-1 text-right">{order.total.toFixed(4)}</TableCell>
+                        <TableCell className="p-1 text-green-400">{order.price.toFixed(6)}</TableCell>
+                        <TableCell className="p-1 text-right">{order.amount.toFixed(6)}</TableCell>
+                        <TableCell className="p-1 text-right">{order.total.toFixed(6)}</TableCell>
                     </TableRow>
                     ))}
                 </TableBody>

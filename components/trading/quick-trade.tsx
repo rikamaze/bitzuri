@@ -94,10 +94,7 @@ export function QuickTrade() {
                     id="asset-select"
                     className="bg-white/5 border-white/20 text-white"
                   >
-                    <div className="flex items-center gap-2">
-                      <AssetIcon symbol={selectedAssetSymbol} />
-                      <SelectValue />
-                    </div>
+                    <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     {marketData.map((asset) => (

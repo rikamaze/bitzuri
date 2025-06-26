@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { ArrowDown, ArrowUp } from "lucide-react"
 import { ResponsiveContainer, LineChart, Line } from "recharts"
+import { useRouter } from "next/navigation"
 
 export function MarketTable() {
   const [searchQuery, setSearchQuery] = useState("")
@@ -28,6 +29,8 @@ export function MarketTable() {
     key: keyof typeof marketData[0]
     direction: "ascending" | "descending"
   } | null>({ key: "marketCap", direction: "descending" })
+
+  const router = useRouter();
 
   const sortedData = useMemo(() => {
     let sortableData = [...marketData]
@@ -205,7 +208,13 @@ export function MarketTable() {
                     </div>
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button size="sm" className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700">Trade</Button>
+                    <Button
+                      size="sm"
+                      className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+                      onClick={() => router.push(`/trade?symbol=${asset.symbol}`)}
+                    >
+                      Trade
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}
