@@ -15,6 +15,8 @@ interface OptimizedImageProps {
   fill?: boolean;
   style?: React.CSSProperties;
   onLoad?: () => void;
+  onError?: () => void;
+  unoptimized?: boolean;
 }
 
 export function OptimizedImage({
@@ -29,6 +31,8 @@ export function OptimizedImage({
   fill = false,
   style,
   onLoad,
+  onError,
+  unoptimized = false,
 }: OptimizedImageProps) {
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -50,7 +54,9 @@ export function OptimizedImage({
         fill={fill}
         style={style}
         onLoad={handleLoad}
+        onError={onError}
         loading={priority ? "eager" : "lazy"}
+        unoptimized={unoptimized}
       />
     </div>
   );

@@ -1,4 +1,4 @@
-import { memo } from "react"
+import { memo, useState, useEffect } from "react"
 import { OptimizedImage } from "@/components/ui/optimized-image"
 
 interface AssetIconProps {
@@ -15,6 +15,56 @@ const sizeClasses = {
   lg: "w-12 h-12 text-base",
 }
 
+const cryptoNameToSymbolMap: { [key: string]: string } = {
+    BTC: "bitcoin",
+    ETH: "ethereum",
+    USDT: "tether",
+    BNB: "bnb",
+    SOL: "solana",
+    XRP: "xrp",
+    DOGE: "dogecoin",
+    ADA: "cardano",
+    AVAX: "avalanche",
+    SHIB: "shiba-inu",
+    DOT: "polkadot",
+    LINK: "chainlink",
+    TRX: "tron",
+    MATIC: "polygon",
+    LTC: "litecoin",
+    ICP: "internet-computer",
+    BCH: "bitcoin-cash",
+    ATOM: "cosmos",
+    UNI: "uniswap",
+    XLM: "stellar",
+    OKB: "okb",
+    NEAR: "near-protocol",
+    ETC: "ethereum-classic",
+    FIL: "filecoin",
+    HBAR: "hedera",
+    APT: "aptos",
+    CRO: "cronos",
+    VET: "vechain",
+    LDO: "lido-dao",
+    IMX: "immutable-x",
+    GRT: "the-graph",
+    MKR: "maker",
+    AAVE: "aave",
+    QNT: "quant",
+    ZEC: "zcash",
+    XTZ: "tezos",
+    MANA: "decentraland",
+    SAND: "the-sandbox",
+    EGLD: "elrond",
+    AXS: "axie-infinity",
+    THETA: "theta-network",
+    FTM: "fantom",
+    KCS: "kucoin-token",
+    RUNE: "thorchain",
+    NEO: "neo",
+    WAVES: "waves",
+    CHZ: "chiliz",
+};
+
 export const AssetIcon = memo(function AssetIcon({ 
   symbol, 
   color, 
@@ -22,18 +72,49 @@ export const AssetIcon = memo(function AssetIcon({
   className = "",
   iconUrl
 }: AssetIconProps) {
+  const [imgSrc, setImgSrc] = useState<string | undefined>(iconUrl);
+  const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    if (iconUrl) {
+      setImgSrc(iconUrl);
+      setHasError(false);
+      return;
+    }
+
+    const upperSymbol = symbol.toUpperCase();
+    const name = cryptoNameToSymbolMap[upperSymbol];
+    if (name) {
+      setImgSrc(`https://cryptologos.cc/logos/${name}-${upperSymbol.toLowerCase()}-logo.svg`);
+    } else {
+        setImgSrc(undefined);
+    }
+    setHasError(false);
+  }, [symbol, iconUrl]);
+
   const bgColor = color ? `${color}20` : "rgba(147, 51, 234, 0.2)"
   const sizePx = size === "sm" ? 24 : size === "md" ? 40 : 48;
 
-  if (iconUrl) {
+  const handleError = () => {
+    if (imgSrc && imgSrc.endsWith('.svg')) {
+      // Fallback to PNG
+      setImgSrc(imgSrc.replace('.svg', '.png'));
+    } else {
+      setHasError(true);
+    }
+  };
+
+  if (imgSrc && !hasError) {
     return (
       <div className={`${sizeClasses[size]} ${className} overflow-hidden rounded-full`}>
         <OptimizedImage
-          src={iconUrl}
+          src={imgSrc}
           alt={`${symbol} icon`}
           width={sizePx}
           height={sizePx}
           className="w-full h-full"
+          onError={handleError}
+          unoptimized={true}
         />
       </div>
     );
@@ -45,7 +126,7 @@ export const AssetIcon = memo(function AssetIcon({
       style={{ backgroundColor: bgColor }}
       aria-label={`${symbol} icon`}
     >
-      {symbol[0]}
+      {symbol[0].toUpperCase()}
     </div>
   )
 })
