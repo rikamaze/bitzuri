@@ -3,12 +3,11 @@
 import type React from "react"
 
 import { useState } from "react"
-import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Eye, EyeOff, ArrowRight, Zap } from "lucide-react"
+import { Eye, EyeOff, ArrowRight } from "lucide-react"
 import Link from "next/link"
 
 export default function LoginPage() {
@@ -44,105 +43,32 @@ export default function LoginPage() {
           <div className="absolute top-40 right-32 w-24 h-24 border border-white/20 rounded-full"></div>
           <div className="absolute bottom-32 left-32 w-16 h-16 border border-white/20 rounded-full"></div>
         </div>
-
-        <div className="relative z-10 flex flex-col justify-between p-12 text-white w-full">
+        <div className="relative z-10 flex flex-col justify-center items-center p-12 text-white w-full">
           {/* Logo */}
-          <div className="flex items-center">
-            <span className="text-2xl font-bold">BITZURI</span>
+          <div className="flex items-center mb-8">
+            <span className="text-3xl font-bold tracking-wide">BITZURI</span>
           </div>
-
-          {/* Main Content */}
-          <div className="space-y-8">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              className="space-y-6"
-            >
-              <h1 className="text-5xl font-bold leading-tight">Welcome back to the future of trading</h1>
-              <p className="text-xl text-white/80 max-w-md">
-                Sign in to access your portfolio, trade cryptocurrencies, and manage your digital assets with
-                confidence.
-              </p>
-            </motion.div>
-
-            {/* Feature Highlights */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="space-y-4"
-            >
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
-                  <Zap className="w-4 h-4" />
-                </div>
-                <span className="text-white/90">Lightning-fast execution in milliseconds</span>
-              </div>
-            </motion.div>
-          </div>
-
-          {/* Crypto Illustrations */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1, delay: 0.4 }}
-            className="flex justify-center items-end space-x-8"
-          >
-            {/* Bitcoin */}
-            <motion.div
-              animate={{ y: [0, -10, 0] }}
-              transition={{ duration: 3, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
-              className="w-16 h-16 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center shadow-lg"
-            >
-              <span className="text-white font-bold text-xl">₿</span>
-            </motion.div>
-
-            {/* Ethereum */}
-            <motion.div
-              animate={{ y: [0, -15, 0] }}
-              transition={{ duration: 3, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut", delay: 0.5 }}
-              className="w-20 h-20 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center shadow-lg"
-            >
-              <span className="text-white font-bold text-xl">Ξ</span>
-            </motion.div>
-
-            {/* Rocket */}
-            <motion.div
-              animate={{ y: [0, -20, 0] }}
-              transition={{ duration: 3, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut", delay: 1 }}
-              className="w-12 h-16 bg-gradient-to-t from-purple-400 to-cyan-400 rounded-t-full rounded-b-sm flex items-center justify-center shadow-lg relative"
-            >
-              <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2">
-                <div className="w-2 h-3 bg-gradient-to-t from-orange-400 to-yellow-400 rounded-b-full"></div>
-              </div>
-              <span className="text-white text-xs">🚀</span>
-            </motion.div>
-          </motion.div>
+          <h1 className="text-4xl font-bold leading-tight text-center">Welcome back</h1>
+          <p className="text-lg text-white/80 max-w-md text-center mt-4">
+            Sign in to access your portfolio and manage your digital assets.
+          </p>
         </div>
       </div>
 
       {/* Right Side - Login Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gray-50">
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8 }}
-          className="w-full max-w-md space-y-8"
-        >
+        <div className="w-full max-w-md bg-white rounded-xl p-8 space-y-8 shadow-none">
           {/* Mobile Logo */}
           <div className="lg:hidden flex items-center justify-center mb-8">
             <span className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">
               BITZURI
             </span>
           </div>
-
           {/* Form Header */}
           <div className="space-y-2">
             <h2 className="text-3xl font-bold text-gray-900">Sign in to BITZURI</h2>
             <p className="text-gray-600">Enter your credentials to access your account</p>
           </div>
-
           {/* Login Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
@@ -155,11 +81,10 @@ export default function LoginPage() {
                 placeholder="Enter your email"
                 value={formData.email}
                 onChange={(e) => updateFormData("email", e.target.value)}
-                className="h-12 border-gray-300 focus:border-purple-500 focus:ring-purple-500"
+                className="h-12 bg-gray-50 text-black border-gray-300 focus:border-purple-600 focus:ring-purple-600"
                 required
               />
             </div>
-
             <div className="space-y-2">
               <Label htmlFor="password" className="text-sm font-medium text-gray-700">
                 Password
@@ -171,7 +96,7 @@ export default function LoginPage() {
                   placeholder="Enter your password"
                   value={formData.password}
                   onChange={(e) => updateFormData("password", e.target.value)}
-                  className="h-12 border-gray-300 focus:border-purple-500 focus:ring-purple-500 pr-12"
+                  className="h-12 bg-gray-50 text-black border-gray-300 focus:border-purple-600 focus:ring-purple-600 pr-12"
                   required
                 />
                 <Button
@@ -185,7 +110,6 @@ export default function LoginPage() {
                 </Button>
               </div>
             </div>
-
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <Checkbox
@@ -201,18 +125,13 @@ export default function LoginPage() {
                 Forgot password?
               </Link>
             </div>
-
             <Button
               type="submit"
-              className="w-full h-12 bg-black hover:bg-gray-800 text-white font-medium rounded-lg transition-colors"
+              className="w-full h-12 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-colors"
               disabled={isLoading}
             >
               {isLoading ? (
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 1, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
-                  className="w-5 h-5 border-2 border-white border-t-transparent rounded-full"
-                />
+                <span className="inline-block w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
               ) : (
                 <>
                   Sign In
@@ -221,28 +140,23 @@ export default function LoginPage() {
               )}
             </Button>
           </form>
-
           {/* Alternative Actions */}
-          <div className="space-y-4">
-            <div className="text-center">
-              <span className="text-gray-500 text-sm">or</span>
-            </div>
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full h-12 border-gray-300 hover:bg-gray-50 font-medium rounded-lg"
-            >
-              Sign in with passkey
-            </Button>
-
-            <div className="text-center text-sm">
-              <span className="text-gray-600">New to BITZURI?</span>{" "}
-              <Link href="/signup" className="text-purple-600 hover:text-purple-700 font-medium underline">
-                Create an account
-              </Link>
-            </div>
+          <div className="text-center">
+            <span className="text-gray-500 text-sm">or</span>
           </div>
-
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full h-12 border-gray-300 hover:bg-gray-50 font-medium rounded-lg"
+          >
+            Sign in with passkey
+          </Button>
+          <div className="text-center text-sm">
+            <span className="text-gray-600">New to BITZURI?</span>{" "}
+            <Link href="/signup" className="text-purple-600 hover:text-purple-700 font-medium underline">
+              Create an account
+            </Link>
+          </div>
           {/* Footer */}
           <div className="text-center text-xs text-gray-500 space-y-2">
             <p>This site is protected by reCAPTCHA and the Google</p>
@@ -255,7 +169,7 @@ export default function LoginPage() {
               </Link>
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   )

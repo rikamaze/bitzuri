@@ -21,7 +21,6 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { useOnboarding } from "@/hooks/useOnboarding"
 import { useReducedMotion } from "@/hooks/useReducedMotion"
 import { LucideProps } from "lucide-react"
 import { ForwardRefExoticComponent, RefAttributes } from "react"
@@ -36,7 +35,6 @@ type NavItem = {
 export function Navigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const pathname = usePathname()
-  const onboarding = useOnboarding()
   const prefersReducedMotion = useReducedMotion()
   
   const toggleMobileMenu = useCallback(() => {
@@ -56,8 +54,6 @@ export function Navigation() {
     pathname === "/" ||
     pathname === "/signup" ||
     pathname === "/verify-email" ||
-    pathname === "/region" ||
-    pathname === "/onboarding" ||
     pathname === "/forgot-password"
   ) {
     return null
@@ -124,16 +120,6 @@ export function Navigation() {
                   <Settings className="h-4 w-4" />
                 </Button>
               </Link>
-              {onboarding.showProgressTracker && (
-                <Button
-                  onClick={onboarding.toggleProgressTracker}
-                  variant="ghost"
-                  size="sm"
-                  className="text-slate-300 hover:text-white hover:bg-white/10 rounded-full w-8 h-8 p-0 hover-effect"
-                >
-                  <Target className="h-4 w-4" />
-                </Button>
-              )}
               <Link href="/profile">
                 <Button variant="ghost" size="sm" className="text-slate-300 hover:text-white hover:bg-white/10 rounded-full w-8 h-8 p-0 overflow-hidden hover-effect">
                   <User className="h-4 w-4" />

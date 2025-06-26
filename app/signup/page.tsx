@@ -3,11 +3,10 @@
 import type React from "react"
 
 import { useState } from "react"
-import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Eye, EyeOff, ArrowRight, Zap, Users } from "lucide-react"
+import { Eye, EyeOff, ArrowRight } from "lucide-react"
 import Link from "next/link"
 
 export default function SignUpPage() {
@@ -44,116 +43,32 @@ export default function SignUpPage() {
           <div className="absolute top-40 right-32 w-24 h-24 border border-white/20 rounded-full"></div>
           <div className="absolute bottom-32 left-32 w-16 h-16 border border-white/20 rounded-full"></div>
         </div>
-
-        <div className="relative z-10 flex flex-col justify-between p-12 text-white w-full">
+        <div className="relative z-10 flex flex-col justify-center items-center p-12 text-white w-full">
           {/* Logo */}
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center border border-white/30">
-              <span className="text-white font-bold text-lg">B</span>
-            </div>
-            <span className="text-2xl font-bold">BITZURI</span>
+          <div className="flex items-center mb-8">
+            <span className="text-3xl font-bold tracking-wide">BITZURI</span>
           </div>
-
-          {/* Main Content */}
-          <div className="space-y-8">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              className="space-y-6"
-            >
-              <h1 className="text-5xl font-bold leading-tight">Start your crypto journey today</h1>
-              <p className="text-xl text-white/80 max-w-md">
-                Join thousands of traders who trust BITZURI for secure, fast, and professional cryptocurrency trading.
-              </p>
-            </motion.div>
-
-            {/* Feature Highlights */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="space-y-4"
-            >
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
-                  <Users className="w-4 h-4" />
-                </div>
-                <span className="text-white/90">Join 500,000+ active traders worldwide</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
-                  <Zap className="w-4 h-4" />
-                </div>
-                <span className="text-white/90">Start trading in under 5 minutes</span>
-              </div>
-            </motion.div>
-          </div>
-
-          {/* Crypto Illustrations */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1, delay: 0.4 }}
-            className="flex justify-center items-end space-x-8"
-          >
-            {/* Bitcoin */}
-            <motion.div
-              animate={{ y: [0, -10, 0] }}
-              transition={{ duration: 3, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
-              className="w-16 h-16 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center shadow-lg"
-            >
-              <span className="text-white font-bold text-xl">₿</span>
-            </motion.div>
-
-            {/* Ethereum */}
-            <motion.div
-              animate={{ y: [0, -15, 0] }}
-              transition={{ duration: 3, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut", delay: 0.5 }}
-              className="w-20 h-20 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center shadow-lg"
-            >
-              <span className="text-white font-bold text-xl">Ξ</span>
-            </motion.div>
-
-            {/* Rocket */}
-            <motion.div
-              animate={{ y: [0, -20, 0] }}
-              transition={{ duration: 3, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut", delay: 1 }}
-              className="w-12 h-16 bg-gradient-to-t from-purple-400 to-cyan-400 rounded-t-full rounded-b-sm flex items-center justify-center shadow-lg relative"
-            >
-              <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2">
-                <div className="w-2 h-3 bg-gradient-to-t from-orange-400 to-yellow-400 rounded-b-full"></div>
-              </div>
-              <span className="text-white text-xs">🚀</span>
-            </motion.div>
-          </motion.div>
+          <h1 className="text-4xl font-bold leading-tight text-center">Start your crypto journey</h1>
+          <p className="text-lg text-white/80 max-w-md text-center mt-4">
+            Join thousands of traders who trust BITZURI for secure, fast, and professional cryptocurrency trading.
+          </p>
         </div>
       </div>
 
       {/* Right Side - Sign Up Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gray-50">
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8 }}
-          className="w-full max-w-md space-y-8"
-        >
+        <div className="w-full max-w-md bg-white rounded-xl p-8 space-y-8 shadow-none">
           {/* Mobile Logo */}
           <div className="lg:hidden flex items-center justify-center space-x-3 mb-8">
-            <div className="w-10 h-10 bg-gradient-to-r from-purple-600 to-cyan-600 rounded-xl flex items-center justify-center">
-              <span className="text-white font-bold text-lg">B</span>
-            </div>
             <span className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">
               BITZURI
             </span>
           </div>
-
           {/* Form Header */}
           <div className="space-y-2">
             <h2 className="text-3xl font-bold text-gray-900">Create your account</h2>
             <p className="text-gray-600">Enter your first and last name as they appear on your government ID.</p>
           </div>
-
           {/* Sign Up Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-2 gap-4">
@@ -166,7 +81,7 @@ export default function SignUpPage() {
                   placeholder="First name"
                   value={formData.firstName}
                   onChange={(e) => updateFormData("firstName", e.target.value)}
-                  className="h-12 border-gray-300 focus:border-purple-500 focus:ring-purple-500"
+                  className="h-12 bg-gray-50 text-black border-gray-300 focus:border-purple-600 focus:ring-purple-600"
                   required
                 />
               </div>
@@ -179,12 +94,11 @@ export default function SignUpPage() {
                   placeholder="Last name"
                   value={formData.lastName}
                   onChange={(e) => updateFormData("lastName", e.target.value)}
-                  className="h-12 border-gray-300 focus:border-purple-500 focus:ring-purple-500"
+                  className="h-12 bg-gray-50 text-black border-gray-300 focus:border-purple-600 focus:ring-purple-600"
                   required
                 />
               </div>
             </div>
-
             <div className="space-y-2">
               <Label htmlFor="email" className="text-sm font-medium text-gray-700">
                 Email address
@@ -195,25 +109,23 @@ export default function SignUpPage() {
                 placeholder="Enter your email"
                 value={formData.email}
                 onChange={(e) => updateFormData("email", e.target.value)}
-                className="h-12 border-gray-300 focus:border-purple-500 focus:ring-purple-500"
+                className="h-12 bg-gray-50 text-black border-gray-300 focus:border-purple-600 focus:ring-purple-600"
                 required
               />
             </div>
-
             <div className="space-y-2">
               <Label htmlFor="password" className="text-sm font-medium text-gray-700">
-                Password (at least 8 characters)
+                Password
               </Label>
               <div className="relative">
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
-                  placeholder="Create a strong password"
+                  placeholder="Enter your password"
                   value={formData.password}
                   onChange={(e) => updateFormData("password", e.target.value)}
-                  className="h-12 border-gray-300 focus:border-purple-500 focus:ring-purple-500 pr-12"
+                  className="h-12 bg-gray-50 text-black border-gray-300 focus:border-purple-600 focus:ring-purple-600 pr-12"
                   required
-                  minLength={8}
                 />
                 <Button
                   type="button"
@@ -226,51 +138,41 @@ export default function SignUpPage() {
                 </Button>
               </div>
             </div>
-
             <Button
               type="submit"
-              className="w-full h-12 bg-black hover:bg-gray-800 text-white font-medium rounded-lg transition-colors"
+              className="w-full h-12 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-colors"
               disabled={isLoading}
             >
               {isLoading ? (
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 1, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
-                  className="w-5 h-5 border-2 border-white border-t-transparent rounded-full"
-                />
+                <span className="inline-block w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
               ) : (
                 <>
-                  Continue
+                  Create Account
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </>
               )}
             </Button>
           </form>
-
           {/* Alternative Actions */}
-          <div className="space-y-4">
-            <div className="text-center text-sm">
-              <span className="text-gray-600">Already have an account?</span>{" "}
-              <Link href="/" className="text-purple-600 hover:text-purple-700 font-medium underline">
-                Sign in
-              </Link>
-            </div>
+          <div className="text-center text-sm">
+            <span className="text-gray-600">Already have an account?</span>{" "}
+            <Link href="/" className="text-purple-600 hover:text-purple-700 font-medium underline">
+              Sign in
+            </Link>
           </div>
-
           {/* Footer */}
           <div className="text-center text-xs text-gray-500 space-y-2">
-            <p>
-              By continuing, you agree to our{" "}
-              <Link href="#" className="underline hover:text-gray-700">
-                Terms of Service
-              </Link>{" "}
-              and{" "}
+            <p>This site is protected by reCAPTCHA and the Google</p>
+            <div className="space-x-4">
               <Link href="#" className="underline hover:text-gray-700">
                 Privacy Policy
               </Link>
-            </p>
+              <Link href="#" className="underline hover:text-gray-700">
+                Terms of Service
+              </Link>
+            </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   )
