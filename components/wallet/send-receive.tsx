@@ -21,8 +21,8 @@ import { Send, Download, Copy, QrCode, AlertTriangle, CheckCircle, Scan, Wallet,
 import { motion } from "framer-motion"
 
 // Dynamically import QR Reader to avoid SSR issues
-const QrReader = dynamic(() =>
-  import('react-qr-reader').then(mod => mod.QrReader),
+const QrScanner = dynamic(() =>
+  import('@yudiel/react-qr-scanner').then(mod => mod.default),
   {
     ssr: false,
     loading: () => <div className="flex items-center justify-center h-64"><LoadingSpinner /></div>
@@ -463,20 +463,23 @@ export const SendReceive = memo(function SendReceive() {
           <div className="space-y-4">
             <div className="relative">
               <div style={{ width: '100%' }}>
-                <QrReader
-                  onResult={(result, error) => {
-                    if (result?.getText()) {
-                      handleQRScan(result.getText());
-                    } else if (error) {
-                      console.error('QR Scanner Error:', error);
-                      toast({
-                        title: "Scanner Error",
-                        description: "Unable to access camera. Please check permissions.",
-                        variant: "destructive",
-                      });
+                <QrScanner
+                  onDecode={(result) => {
+                    if (result) {
+                      handleQRScan(result);
                     }
                   }}
-                  constraints={{ facingMode: "environment" }}
+                  onError={(error) => {
+                    console.error('QR Scanner Error:', error);
+                    toast({
+                      title: "Scanner Error",
+                      description: "Unable to access camera. Please check permissions.",
+                      variant: "destructive",
+                    });
+                  }}
+                  scanDelay={300}
+                  containerStyle={{ width: '100%', height: '300px' }}
+                  videoStyle={{ width: '100%', height: '100%' }}
                 />
               </div>
             </div>
