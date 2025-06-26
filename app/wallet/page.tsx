@@ -316,29 +316,29 @@ export default function WalletPage() {
               <CardHeader className="pb-3">
                 <CardTitle className="text-lg font-semibold text-white">Quick Actions</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3">
-                <Link href="/fiat/deposit" className="w-full">
+              <CardContent className="grid grid-cols-2 gap-3">
+                <Link href="/fiat/deposit">
                   <Button className="w-full justify-start gap-3 h-12 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white">
                     <Plus className="h-4 w-4" />
                     Deposit
                   </Button>
                 </Link>
 
-                <Link href="/fiat/withdraw" className="w-full">
+                <Link href="/fiat/withdraw">
                   <Button className="w-full justify-start gap-3 h-12 bg-white/5 border-white/20 text-white hover:bg-white/10">
                     <Minus className="h-4 w-4" />
                     Withdraw
                   </Button>
                 </Link>
 
-                <Link href="/features" className="w-full">
+                <Link href="/features">
                   <Button className="w-full justify-start gap-3 h-12 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white">
                     <ArrowUpRight className="h-4 w-4" />
                     Buy Crypto
                   </Button>
                 </Link>
 
-                <Link href="/features" className="w-full">
+                <Link href="/features">
                   <Button className="w-full justify-start gap-3 h-12 bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white">
                     <ArrowDownRight className="h-4 w-4" />
                     Sell Crypto
