@@ -23,6 +23,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "@/components/ui/use-toast";
+import { withdrawFiat } from "@/lib/api/fiatService";
+import { useState } from "react";
 
 const withdrawFormSchema = z.object({
   amount: z.string().refine((val) => !isNaN(parseFloat(val)) && parseFloat(val) > 0, {
@@ -43,21 +45,45 @@ const defaultValues: Partial<WithdrawFormValues> = {
 };
 
 export function WithdrawForm() {
+  const [isLoading, setIsLoading] = useState(false);
   const form = useForm<WithdrawFormValues>({
     resolver: zodResolver(withdrawFormSchema),
     defaultValues,
     mode: "onChange",
   });
 
-  function onSubmit(data: WithdrawFormValues) {
-    toast({
-      title: "Withdrawal Submitted",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
+  async function onSubmit(data: WithdrawFormValues) {
+    setIsLoading(true);
+    try {
+        const response = await withdrawFiat({
+            ...data,
+            currency: data.currency,
+            paymentMethod: data.destination,
+            amount: parseFloat(data.amount)
+        });
+
+        if (response.status === 'failed') {
+            toast({
+                title: "Withdrawal Failed",
+                description: response.message,
+                variant: "destructive",
+            });
+        } else {
+            toast({
+                title: "Withdrawal Submitted",
+                description: response.message,
+            });
+            form.reset();
+        }
+    } catch (error) {
+        toast({
+            title: "An unexpected error occurred",
+            description: "Please try again later.",
+            variant: "destructive",
+        });
+    } finally {
+        setIsLoading(false);
+    }
   }
 
   return (
@@ -129,7 +155,7 @@ export function WithdrawForm() {
             </FormItem>
           )}
         />
-        <Button type="submit">Continue</Button>
+        <Button type="submit" disabled={isLoading}>{isLoading ? "Processing..." : "Continue"}</Button>
       </form>
     </Form>
   );

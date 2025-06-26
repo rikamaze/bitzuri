@@ -17,6 +17,7 @@ import { useToast } from "@/components/ui/use-toast"
 import { AssetIcon } from "@/components/shared/asset-icon"
 import { useMarketData } from "@/lib/hooks/useMarketData"
 import { Separator } from "@/components/ui/separator"
+import { createOrder, calculateTradingFee } from "@/lib/api/tradeService"
 
 export function TradeForm() {
   const [orderType, setOrderType] = useState("market") // market or limit
@@ -25,6 +26,7 @@ export function TradeForm() {
   const [amount, setAmount] = useState("") // in quote currency (e.g. USD) for market, in base (e.g. BTC) for limit
   const [limitPrice, setLimitPrice] = useState("")
   const [total, setTotal] = useState("") // total in quote currency
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const { toast } = useToast()
   const { marketData, loading } = useMarketData()
@@ -55,21 +57,37 @@ export function TradeForm() {
   }, [selectedAsset])
 
 
-  function onSubmit() {
-    toast({
-      title: `Order Submitted: ${side.toUpperCase()} ${orderType.toUpperCase()}`,
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">
-            {JSON.stringify(
-              { side, orderType, asset: selectedAssetSymbol, amount, limitPrice: orderType === 'limit' ? limitPrice : 'N/A', total },
-              null,
-              2,
-            )}
-          </code>
-        </pre>
-      ),
-    })
+  async function onSubmit() {
+    setIsProcessing(true);
+    const price = orderType === 'market' ? selectedAsset?.price ?? 0 : parseFloat(limitPrice);
+    const orderAmount = orderType === 'market' ? parseFloat(total) / price : parseFloat(amount);
+    
+    try {
+        const response = await createOrder({
+            type: side as "buy" | "sell",
+            symbol: selectedAssetSymbol,
+            orderType: orderType as "market" | "limit",
+            amount: orderAmount,
+            price: price,
+            fee: calculateTradingFee(orderAmount * price)
+        });
+        
+        toast({
+            title: `Order ${response.status}`,
+            description: `Successfully ${side === 'buy' ? 'bought' : 'sold'} ${response.executedAmount.toFixed(6)} ${selectedAssetSymbol} at ~$${response.executedPrice.toFixed(2)}`,
+        });
+        setAmount("");
+        setTotal("");
+
+    } catch(error) {
+        toast({
+            title: "Order Failed",
+            description: error instanceof Error ? error.message : "An unexpected error occurred.",
+            variant: "destructive",
+        });
+    } finally {
+        setIsProcessing(false);
+    }
   }
 
   return (
@@ -126,9 +144,9 @@ export function TradeForm() {
         <Button
             onClick={onSubmit}
             className={`w-full mt-4 text-white font-bold ${side === 'buy' ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'}`}
-            disabled={!amount || (orderType === 'limit' && !limitPrice)}
+            disabled={!amount || (orderType === 'limit' && !limitPrice) || isProcessing}
         >
-          {side === 'buy' ? 'Buy' : 'Sell'} {selectedAssetSymbol}
+          {isProcessing ? "Processing..." : `${side === 'buy' ? 'Buy' : 'Sell'} ${selectedAssetSymbol}`}
         </Button>
 
       </CardContent>
