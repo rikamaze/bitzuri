@@ -18,6 +18,29 @@
   .hover-effect {
     @apply transition-all duration-200 ease-in-out;
   }
+  
+  /* Improved focus styles for accessibility */
+  .focus-ring {
+    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900;
+  }
+  
+  /* Skip link styles */
+  .sr-only {
+    @apply absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0;
+  }
+  
+  .sr-only:focus {
+    @apply not-sr-only;
+  }
+  
+  /* Reduced motion utilities */
+  .motion-safe {
+    @apply motion-safe:transition-all motion-safe:duration-200;
+  }
+  
+  .motion-reduce {
+    @apply motion-reduce:transition-none motion-reduce:transform-none;
+  }
 }
 
 @layer components {

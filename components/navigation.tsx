@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useCallback } from "react"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -9,11 +9,17 @@ import { Home, TrendingUp, Gift, Wallet, User, Bell, Settings, Menu, X, Search, 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useOnboarding } from "@/hooks/useOnboarding"
+import { useReducedMotion } from "@/hooks/useReducedMotion"
 
 export function Navigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const pathname = usePathname()
   const onboarding = useOnboarding()
+  const prefersReducedMotion = useReducedMotion()
+  
+  const toggleMobileMenu = useCallback(() => {
+    setIsMobileMenuOpen(prev => !prev)
+  }, [])
 
   const navItems = [
     { href: "/dashboard", label: "Dashboard", icon: Home },
@@ -38,10 +44,12 @@ export function Navigation() {
     <>
       {/* Desktop Navigation */}
       <motion.nav
-        initial={{ opacity: 0, y: -20 }}
+        initial={prefersReducedMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
+        transition={{ duration: prefersReducedMotion ? 0 : 0.3 }}
         className="hidden lg:flex fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-slate-900/90 border-b border-white/10 shadow-md"
+        role="navigation"
+        aria-label="Main navigation"
       >
         <div className="max-w-7xl mx-auto px-6 w-full">
           <div className="flex items-center justify-between h-16">
@@ -120,10 +128,12 @@ export function Navigation() {
 
       {/* Mobile Navigation */}
       <motion.nav
-        initial={{ opacity: 0, y: -20 }}
+        initial={prefersReducedMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
+        transition={{ duration: prefersReducedMotion ? 0 : 0.3 }}
         className="lg:hidden fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-slate-900/90 border-b border-white/10 shadow-md"
+        role="navigation"
+        aria-label="Mobile navigation"
       >
         <div className="px-4">
           <div className="flex items-center justify-between h-16">
@@ -148,8 +158,11 @@ export function Navigation() {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                onClick={toggleMobileMenu}
                 className="text-slate-300 hover:text-white hover:bg-white/10 rounded-full w-8 h-8 p-0 hover-effect"
+                aria-expanded={isMobileMenuOpen}
+                aria-controls="mobile-menu"
+                aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
               >
                 {isMobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
               </Button>
@@ -159,11 +172,13 @@ export function Navigation() {
           {/* Mobile Menu */}
           {isMobileMenuOpen && (
             <motion.div
-              initial={{ opacity: 0, height: 0 }}
+              id="mobile-menu"
+              initial={prefersReducedMotion ? { opacity: 1, height: "auto" } : { opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.2 }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.2 }}
               className="pb-4 border-t border-white/10 mt-4 bg-slate-900/95 backdrop-blur-xl"
+              role="menu"
             >
               <div className="space-y-2 pt-4">
                 {navItems.map((item) => {
@@ -238,7 +253,11 @@ export function Navigation() {
       </motion.nav>
 
       {/* Bottom Navigation for Mobile */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 backdrop-blur-xl bg-slate-900/95 border-t border-white/10 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+      <div 
+        className="lg:hidden fixed bottom-0 left-0 right-0 z-50 backdrop-blur-xl bg-slate-900/95 border-t border-white/10 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]"
+        role="navigation"
+        aria-label="Bottom navigation"
+      >
         <div className="grid grid-cols-5 h-16">
           {navItems.map((item) => {
             const Icon = item.icon
