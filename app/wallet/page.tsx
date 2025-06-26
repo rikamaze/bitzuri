@@ -150,10 +150,6 @@ const StatusIcon = memo(function StatusIcon({ status }: { status: string }) {
 export default function WalletPage() {
   const [balanceVisible, setBalanceVisible] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
-  const [depositDialogOpen, setDepositDialogOpen] = useState(false)
-  const [withdrawDialogOpen, setWithdrawDialogOpen] = useState(false)
-  const [buyDialogOpen, setBuyDialogOpen] = useState(false)
-  const [sellDialogOpen, setSellDialogOpen] = useState(false)
   const [activeTab, setActiveTab] = useState("assets")
 
   const searchParams = useSearchParams()
@@ -173,11 +169,7 @@ export default function WalletPage() {
 
   // Handle URL parameters for direct actions
   useEffect(() => {
-    const action = searchParams.get("action")
     const tab = searchParams.get("tab")
-
-    if (action === "deposit") setDepositDialogOpen(true)
-    if (action === "withdraw") setWithdrawDialogOpen(true)
     if (tab === "trading") setActiveTab("trading")
   }, [searchParams])
 
@@ -325,45 +317,33 @@ export default function WalletPage() {
                 <CardTitle className="text-lg font-semibold text-white">Quick Actions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                <Dialog open={depositDialogOpen} onOpenChange={setDepositDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button className="w-full justify-start gap-3 h-12 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white">
-                      <Plus className="h-4 w-4" />
-                      Deposit
-                    </Button>
-                  </DialogTrigger>
-                  <DepositDialog />
-                </Dialog>
+                <Link href="/fiat/deposit" className="w-full">
+                  <Button className="w-full justify-start gap-3 h-12 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white">
+                    <Plus className="h-4 w-4" />
+                    Deposit
+                  </Button>
+                </Link>
 
-                <Dialog open={withdrawDialogOpen} onOpenChange={setWithdrawDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button className="w-full justify-start gap-3 h-12 bg-white/5 border-white/20 text-white hover:bg-white/10">
-                      <Minus className="h-4 w-4" />
-                      Withdraw
-                    </Button>
-                  </DialogTrigger>
-                  <WithdrawDialog />
-                </Dialog>
+                <Link href="/fiat/withdraw" className="w-full">
+                  <Button className="w-full justify-start gap-3 h-12 bg-white/5 border-white/20 text-white hover:bg-white/10">
+                    <Minus className="h-4 w-4" />
+                    Withdraw
+                  </Button>
+                </Link>
 
-                <Dialog open={buyDialogOpen} onOpenChange={setBuyDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button className="w-full justify-start gap-3 h-12 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white">
-                      <ArrowUpRight className="h-4 w-4" />
-                      Buy Crypto
-                    </Button>
-                  </DialogTrigger>
-                  <BuyDialog />
-                </Dialog>
+                <Link href="/features" className="w-full">
+                  <Button className="w-full justify-start gap-3 h-12 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white">
+                    <ArrowUpRight className="h-4 w-4" />
+                    Buy Crypto
+                  </Button>
+                </Link>
 
-                <Dialog open={sellDialogOpen} onOpenChange={setSellDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button className="w-full justify-start gap-3 h-12 bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white">
-                      <ArrowDownRight className="h-4 w-4" />
-                      Sell Crypto
-                    </Button>
-                  </DialogTrigger>
-                  <SellDialog />
-                </Dialog>
+                <Link href="/features" className="w-full">
+                  <Button className="w-full justify-start gap-3 h-12 bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white">
+                    <ArrowDownRight className="h-4 w-4" />
+                    Sell Crypto
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
 
@@ -446,20 +426,22 @@ export default function WalletPage() {
                               <PriceChange change={asset.change} changePercent={asset.changePercent} size="sm" />
                             </div>
                             <div className="flex items-center gap-2">
-                              <Button
-                                size="sm"
-                                onClick={() => setBuyDialogOpen(true)}
-                                className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white"
-                              >
-                                Buy
-                              </Button>
-                              <Button
-                                size="sm"
-                                onClick={() => setSellDialogOpen(true)}
-                                className="bg-white/5 border-white/20 text-white hover:bg-white/10"
-                              >
-                                Sell
-                              </Button>
+                              <Link href="/features">
+                                <Button
+                                  size="sm"
+                                  className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white"
+                                >
+                                  Buy
+                                </Button>
+                              </Link>
+                              <Link href="/features">
+                                <Button
+                                  size="sm"
+                                  className="bg-white/5 border-white/20 text-white hover:bg-white/10"
+                                >
+                                  Sell
+                                </Button>
+                              </Link>
                             </div>
                           </motion.div>
                         ))}
@@ -573,14 +555,14 @@ export default function WalletPage() {
                     <CardContent className="space-y-4">
                       <div className="grid grid-cols-2 gap-3">
                         <Button
-                          onClick={() => setBuyDialogOpen(true)}
+                          onClick={() => setActiveTab("assets")}
                           className="h-12 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white"
                         >
                           <Plus className="h-4 w-4 mr-2" />
                           Buy
                         </Button>
                         <Button
-                          onClick={() => setSellDialogOpen(true)}
+                          onClick={() => setActiveTab("assets")}
                           className="h-12 bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white"
                         >
                           <Minus className="h-4 w-4 mr-2" />
@@ -644,349 +626,3 @@ export default function WalletPage() {
     </ErrorBoundary>
   )
 }
-
-// Optimized Dialog Components
-const DepositDialog = memo(function DepositDialog() {
-  const [selectedMethod, setSelectedMethod] = useState("crypto")
-  const [selectedAsset, setSelectedAsset] = useState("BTC")
-
-  return (
-    <DialogContent className="backdrop-blur-md bg-slate-900/95 border-white/20 text-white max-w-md">
-      <DialogHeader>
-        <DialogTitle className="text-white">Deposit Funds</DialogTitle>
-        <DialogDescription className="text-slate-300">Add funds to your BITZURI wallet</DialogDescription>
-      </DialogHeader>
-      <div className="space-y-4">
-        <div className="grid grid-cols-3 gap-2">
-          <Button
-            variant={selectedMethod === "crypto" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setSelectedMethod("crypto")}
-            className={
-              selectedMethod === "crypto"
-                ? "bg-purple-600 hover:bg-purple-700"
-                : "bg-white/5 border-white/20 text-white hover:bg-white/10"
-            }
-          >
-            <Wallet className="h-4 w-4 mr-1" />
-            Crypto
-          </Button>
-          <Button
-            variant={selectedMethod === "card" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setSelectedMethod("card")}
-            className={
-              selectedMethod === "card"
-                ? "bg-purple-600 hover:bg-purple-700"
-                : "bg-white/5 border-white/20 text-white hover:bg-white/10"
-            }
-          >
-            <CreditCard className="h-4 w-4 mr-1" />
-            Card
-          </Button>
-          <Button
-            variant={selectedMethod === "bank" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setSelectedMethod("bank")}
-            className={
-              selectedMethod === "bank"
-                ? "bg-purple-600 hover:bg-purple-700"
-                : "bg-white/5 border-white/20 text-white hover:bg-white/10"
-            }
-          >
-            <Banknote className="h-4 w-4 mr-1" />
-            Bank
-          </Button>
-        </div>
-
-        {selectedMethod === "crypto" && (
-          <div className="space-y-4">
-            <div>
-              <Label className="text-slate-300">Select Asset</Label>
-              <Select value={selectedAsset} onValueChange={setSelectedAsset}>
-                <SelectTrigger className="bg-white/5 border-white/20 text-white">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="BTC">Bitcoin (BTC)</SelectItem>
-                  <SelectItem value="ETH">Ethereum (ETH)</SelectItem>
-                  <SelectItem value="USDT">Tether (USDT)</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="p-4 bg-white/5 rounded-lg border border-white/10">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-slate-300">Deposit Address</span>
-                <div className="flex gap-2">
-                  <Button size="sm" variant="ghost" className="text-slate-400 hover:text-white">
-                    <Copy className="h-4 w-4" />
-                  </Button>
-                  <Button size="sm" variant="ghost" className="text-slate-400 hover:text-white">
-                    <QrCode className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-              <p className="text-white font-mono text-sm break-all">bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh</p>
-            </div>
-          </div>
-        )}
-
-        {selectedMethod === "card" && (
-          <div className="space-y-4">
-            <div>
-              <Label className="text-slate-300">Amount (USD)</Label>
-              <Input placeholder="0.00" className="bg-white/5 border-white/20 text-white placeholder:text-slate-400" />
-            </div>
-            <Button className="w-full bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700">
-              Continue with Card
-            </Button>
-          </div>
-        )}
-
-        {selectedMethod === "bank" && (
-          <div className="space-y-4">
-            <div>
-              <Label className="text-slate-300">Amount (USD)</Label>
-              <Input placeholder="0.00" className="bg-white/5 border-white/20 text-white placeholder:text-slate-400" />
-            </div>
-            <Button className="w-full bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700">
-              Continue with Bank Transfer
-            </Button>
-          </div>
-        )}
-      </div>
-    </DialogContent>
-  )
-})
-
-const WithdrawDialog = memo(function WithdrawDialog() {
-  const [selectedAsset, setSelectedAsset] = useState("BTC")
-
-  return (
-    <DialogContent className="backdrop-blur-md bg-slate-900/95 border-white/20 text-white max-w-md">
-      <DialogHeader>
-        <DialogTitle className="text-white">Withdraw Funds</DialogTitle>
-        <DialogDescription className="text-slate-300">Send your crypto to an external wallet</DialogDescription>
-      </DialogHeader>
-      <div className="space-y-4">
-        <div>
-          <Label className="text-slate-300">Select Asset</Label>
-          <Select value={selectedAsset} onValueChange={setSelectedAsset}>
-            <SelectTrigger className="bg-white/5 border-white/20 text-white">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="BTC">Bitcoin (BTC)</SelectItem>
-              <SelectItem value="ETH">Ethereum (ETH)</SelectItem>
-              <SelectItem value="USDT">Tether (USDT)</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div>
-          <Label className="text-slate-300">Recipient Address</Label>
-          <Input
-            placeholder="Enter wallet address"
-            className="bg-white/5 border-white/20 text-white placeholder:text-slate-400"
-          />
-        </div>
-        <div>
-          <Label className="text-slate-300">Amount</Label>
-          <Input placeholder="0.00" className="bg-white/5 border-white/20 text-white placeholder:text-slate-400" />
-          <div className="flex justify-between text-sm mt-1">
-            <span className="text-slate-400">Available: 0.5432 BTC</span>
-            <button className="text-purple-400 hover:text-purple-300">Max</button>
-          </div>
-        </div>
-        <div className="p-4 bg-white/5 rounded-lg border border-white/10">
-          <div className="flex justify-between text-sm">
-            <span className="text-slate-300">Network Fee</span>
-            <span className="text-white">0.0001 BTC</span>
-          </div>
-          <div className="flex justify-between text-sm mt-1">
-            <span className="text-slate-300">You'll receive</span>
-            <span className="text-white">0.0000 BTC</span>
-          </div>
-        </div>
-        <Button className="w-full bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700">
-          Withdraw
-        </Button>
-      </div>
-    </DialogContent>
-  )
-})
-
-const BuyDialog = memo(function BuyDialog() {
-  const [selectedAsset, setSelectedAsset] = useState("BTC")
-  const [amount, setAmount] = useState("")
-  const [orderType, setOrderType] = useState("market")
-
-  return (
-    <DialogContent className="backdrop-blur-md bg-slate-900/95 border-white/20 text-white max-w-md">
-      <DialogHeader>
-        <DialogTitle className="text-white">Buy Cryptocurrency</DialogTitle>
-        <DialogDescription className="text-slate-300">Purchase crypto with your available balance</DialogDescription>
-      </DialogHeader>
-      <div className="space-y-4">
-        <div className="grid grid-cols-2 gap-2">
-          <Button
-            variant={orderType === "market" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setOrderType("market")}
-            className={
-              orderType === "market"
-                ? "bg-purple-600 hover:bg-purple-700"
-                : "bg-white/5 border-white/20 text-white hover:bg-white/10"
-            }
-          >
-            Market
-          </Button>
-          <Button
-            variant={orderType === "limit" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setOrderType("limit")}
-            className={
-              orderType === "limit"
-                ? "bg-purple-600 hover:bg-purple-700"
-                : "bg-white/5 border-white/20 text-white hover:bg-white/10"
-            }
-          >
-            Limit
-          </Button>
-        </div>
-        <div>
-          <Label className="text-slate-300">Select Asset</Label>
-          <Select value={selectedAsset} onValueChange={setSelectedAsset}>
-            <SelectTrigger className="bg-white/5 border-white/20 text-white">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="BTC">Bitcoin (BTC)</SelectItem>
-              <SelectItem value="ETH">Ethereum (ETH)</SelectItem>
-              <SelectItem value="BNB">Binance Coin (BNB)</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div>
-          <Label className="text-slate-300">Amount (USD)</Label>
-          <Input
-            placeholder="0.00"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            className="bg-white/5 border-white/20 text-white placeholder:text-slate-400"
-          />
-          <div className="flex justify-between text-sm mt-1">
-            <span className="text-slate-400">Available: $18,234.56</span>
-            <button className="text-purple-400 hover:text-purple-300">Max</button>
-          </div>
-        </div>
-        {orderType === "limit" && (
-          <div>
-            <Label className="text-slate-300">Limit Price</Label>
-            <Input placeholder="0.00" className="bg-white/5 border-white/20 text-white placeholder:text-slate-400" />
-          </div>
-        )}
-        <div className="p-4 bg-white/5 rounded-lg border border-white/10">
-          <div className="flex justify-between text-sm">
-            <span className="text-slate-300">Trading Fee (0.1%)</span>
-            <span className="text-white">$0.00</span>
-          </div>
-          <div className="flex justify-between text-sm mt-1">
-            <span className="text-slate-300">You'll receive</span>
-            <span className="text-white">0.0000 {selectedAsset}</span>
-          </div>
-        </div>
-        <Button className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700">
-          Buy {selectedAsset}
-        </Button>
-      </div>
-    </DialogContent>
-  )
-})
-
-const SellDialog = memo(function SellDialog() {
-  const [selectedAsset, setSelectedAsset] = useState("BTC")
-  const [amount, setAmount] = useState("")
-  const [orderType, setOrderType] = useState("market")
-
-  return (
-    <DialogContent className="backdrop-blur-md bg-slate-900/95 border-white/20 text-white max-w-md">
-      <DialogHeader>
-        <DialogTitle className="text-white">Sell Cryptocurrency</DialogTitle>
-        <DialogDescription className="text-slate-300">Sell your crypto holdings</DialogDescription>
-      </DialogHeader>
-      <div className="space-y-4">
-        <div className="grid grid-cols-2 gap-2">
-          <Button
-            variant={orderType === "market" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setOrderType("market")}
-            className={
-              orderType === "market"
-                ? "bg-purple-600 hover:bg-purple-700"
-                : "bg-white/5 border-white/20 text-white hover:bg-white/10"
-            }
-          >
-            Market
-          </Button>
-          <Button
-            variant={orderType === "limit" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setOrderType("limit")}
-            className={
-              orderType === "limit"
-                ? "bg-purple-600 hover:bg-purple-700"
-                : "bg-white/5 border-white/20 text-white hover:bg-white/10"
-            }
-          >
-            Limit
-          </Button>
-        </div>
-        <div>
-          <Label className="text-slate-300">Select Asset</Label>
-          <Select value={selectedAsset} onValueChange={setSelectedAsset}>
-            <SelectTrigger className="bg-white/5 border-white/20 text-white">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="BTC">Bitcoin (BTC)</SelectItem>
-              <SelectItem value="ETH">Ethereum (ETH)</SelectItem>
-              <SelectItem value="BNB">Binance Coin (BNB)</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div>
-          <Label className="text-slate-300">Amount</Label>
-          <Input
-            placeholder="0.00"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            className="bg-white/5 border-white/20 text-white placeholder:text-slate-400"
-          />
-          <div className="flex justify-between text-sm mt-1">
-            <span className="text-slate-400">Available: 0.5432 BTC</span>
-            <button className="text-purple-400 hover:text-purple-300">Max</button>
-          </div>
-        </div>
-        {orderType === "limit" && (
-          <div>
-            <Label className="text-slate-300">Limit Price</Label>
-            <Input placeholder="0.00" className="bg-white/5 border-white/20 text-white placeholder:text-slate-400" />
-          </div>
-        )}
-        <div className="p-4 bg-white/5 rounded-lg border border-white/10">
-          <div className="flex justify-between text-sm">
-            <span className="text-slate-300">Trading Fee (0.1%)</span>
-            <span className="text-white">$0.00</span>
-          </div>
-          <div className="flex justify-between text-sm mt-1">
-            <span className="text-slate-300">You'll receive</span>
-            <span className="text-white">$0.00</span>
-          </div>
-        </div>
-        <Button className="w-full bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700">
-          Sell {selectedAsset}
-        </Button>
-      </div>
-    </DialogContent>
-  )
-})

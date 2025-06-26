@@ -5,11 +5,33 @@ import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import { Home, TrendingUp, Gift, Wallet, User, Bell, Settings, Menu, X, Search, Target } from "lucide-react"
+import {
+  Home,
+  TrendingUp,
+  Wallet,
+  User,
+  Bell,
+  Settings,
+  Menu,
+  X,
+  Search,
+  Target,
+  Landmark,
+  BookMarked,
+} from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useOnboarding } from "@/hooks/useOnboarding"
 import { useReducedMotion } from "@/hooks/useReducedMotion"
+import { LucideProps } from "lucide-react"
+import { ForwardRefExoticComponent, RefAttributes } from "react"
+
+type NavItem = {
+  href: string
+  label: string
+  icon: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>
+  badge?: boolean
+}
 
 export function Navigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -21,11 +43,12 @@ export function Navigation() {
     setIsMobileMenuOpen(prev => !prev)
   }, [])
 
-  const navItems = [
-    { href: "/dashboard", label: "Dashboard", icon: Home },
-    { href: "/features", label: "Trade", icon: TrendingUp },
-    { href: "/earn", label: "Earn", icon: Gift, badge: "New" },
-    { href: "/wallet", label: "Wallet", icon: Wallet },
+  const navItems: NavItem[] = [
+    { href: "/wallet", label: "Portfolio", icon: Wallet, badge: false },
+    { href: "/market", label: "Market", icon: Target, badge: false },
+    { href: "/features", label: "Trade", icon: TrendingUp, badge: false },
+    { href: "/fiat", label: "Fiat", icon: Landmark, badge: false },
+    { href: "/orders", label: "Orders", icon: BookMarked, badge: false },
   ]
 
   // Don't show navigation on auth pages
@@ -54,7 +77,7 @@ export function Navigation() {
         <div className="max-w-7xl mx-auto px-6 w-full">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <Link href="/dashboard" className="flex items-center space-x-3 hover-effect">
+            <Link href="/wallet" className="flex items-center space-x-3 hover-effect">
               <div className="w-8 h-8 bg-gradient-to-r from-purple-600 to-cyan-600 rounded-lg flex items-center justify-center shadow-lg">
                 <span className="text-white font-bold text-sm">B</span>
               </div>
@@ -80,11 +103,6 @@ export function Navigation() {
                   >
                     <Icon className="h-4 w-4" />
                     <span className="text-sm font-medium">{item.label}</span>
-                    {item.badge && (
-                      <Badge className="bg-gradient-to-r from-purple-600 to-cyan-600 text-white text-xs px-1.5 py-0.5 shadow-sm">
-                        {item.badge}
-                      </Badge>
-                    )}
                   </Link>
                 )
               })}
@@ -138,7 +156,7 @@ export function Navigation() {
         <div className="px-4">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <Link href="/dashboard" className="flex items-center space-x-2 hover-effect">
+            <Link href="/wallet" className="flex items-center space-x-2 hover-effect">
               <div className="w-8 h-8 bg-gradient-to-r from-purple-600 to-cyan-600 rounded-lg flex items-center justify-center shadow-lg">
                 <span className="text-white font-bold text-sm">B</span>
               </div>
@@ -197,11 +215,6 @@ export function Navigation() {
                     >
                       <Icon className="h-5 w-5" />
                       <span className="font-medium">{item.label}</span>
-                      {item.badge && (
-                        <Badge className="bg-gradient-to-r from-purple-600 to-cyan-600 text-white text-xs px-1.5 py-0.5 shadow-sm">
-                          {item.badge}
-                        </Badge>
-                      )}
                     </Link>
                   )
                 })}

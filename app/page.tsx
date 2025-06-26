@@ -26,7 +26,7 @@ export default function LoginPage() {
     // Simulate API call
     setTimeout(() => {
       setIsLoading(false)
-      window.location.href = "/dashboard"
+      window.location.href = "/wallet"
     }, 2000)
   }
 
